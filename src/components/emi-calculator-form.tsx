@@ -57,29 +57,36 @@ export function EmiCalculatorForm() {
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    mode: "onChange",
+    mode: "onChange", // onChange mode is fine if useEffect is well-managed or calculations are manual
     defaultValues: {
       loanAmount: 100000,
       interestRate: 7.5,
       loanTerm: 5,
     },
   });
-
+  
   const performCalculation = (principal: number, annualRate: number, tenureYears: number) => {
     const monthlyRate = annualRate / 12 / 100;
     const tenureMonths = tenureYears * 12;
 
-    const plainFormattingOptions: Intl.NumberFormatOptions = {
+    const currencyFormattingOptions: Intl.NumberFormatOptions = {
+      style: "currency",
+      currency: "INR",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    };
+     const plainFormattingOptions: Intl.NumberFormatOptions = {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     };
 
-    if (principal > 0 && tenureMonths > 0 && annualRate >= 0) { // Allow 0 rate for direct calculation
+
+    if (principal > 0 && tenureMonths > 0 && annualRate >= 0) {
       let emiValueNum: number;
       let totalPaymentNum: number;
       let totalInterestNum: number;
 
-      if (monthlyRate === 0 && annualRate === 0) { // Handle 0% interest rate specifically
+      if (monthlyRate === 0 && annualRate === 0) {
         emiValueNum = principal / tenureMonths;
         totalInterestNum = 0;
         totalPaymentNum = principal;
@@ -89,7 +96,7 @@ export function EmiCalculatorForm() {
           (Math.pow(1 + monthlyRate, tenureMonths) - 1);
         totalPaymentNum = emiValueNum * tenureMonths;
         totalInterestNum = totalPaymentNum - principal;
-      } else { // Invalid rate scenario if not 0 and not positive monthlyRate
+      } else {
         setEmi(null);
         setTotalInterest(null);
         setTotalPayment(null);
@@ -98,14 +105,14 @@ export function EmiCalculatorForm() {
         setTotalInterestForChart(0);
         return;
       }
-
+      
       setEmi(emiValueNum.toLocaleString('en-IN', plainFormattingOptions));
       setTotalInterest(totalInterestNum.toLocaleString('en-IN', plainFormattingOptions));
       setTotalPayment(totalPaymentNum.toLocaleString('en-IN', plainFormattingOptions));
 
       setPrincipalAmountForChart(principal);
       setTotalInterestForChart(totalInterestNum);
-
+      
       setChartData([
         { name: 'principal', value: principal, fill: chartConfig.principal.color },
         { name: 'interest', value: totalInterestNum, fill: chartConfig.interest.color }
@@ -122,11 +129,12 @@ export function EmiCalculatorForm() {
   };
 
   const handleCalculateClick = async () => {
-    const isFormValid = await form.trigger();
+    const isFormValid = await form.trigger(); // Validate all fields
     if (isFormValid) {
       const values = form.getValues();
       performCalculation(values.loanAmount, values.interestRate, values.loanTerm);
     } else {
+      // Clear results if form is invalid after button click
       setEmi(null);
       setTotalInterest(null);
       setTotalPayment(null);
@@ -135,6 +143,7 @@ export function EmiCalculatorForm() {
       setTotalInterestForChart(0);
     }
   };
+
 
   return (
     <Card className="w-full max-w-2xl mx-auto shadow-xl">
@@ -251,29 +260,38 @@ export function EmiCalculatorForm() {
                       cy="50%"
                       outerRadius={"70%"}
                       labelLine={false}
-                      label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+                      label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, value }) => {
                         const RADIAN = Math.PI / 180;
                         const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
                         const x = cx + radius * Math.cos(-midAngle * RADIAN);
                         const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-                        if (percent < 0.05) return null;
+                        // If the slice is too small, don't show the label to prevent clutter
+                        if (percent < 0.08) { 
+                          return null;
+                        }
 
                         return (
                           <text
                             x={x}
                             y={y}
-                            className="fill-primary-foreground text-xs font-medium"
+                            className="fill-primary-foreground text-[10px] font-medium" // Smaller text for slice label
                             textAnchor={x > cx ? 'start' : 'end'}
                             dominantBaseline="central"
                           >
-                            {`${(percent * 100).toFixed(0)}%`}
+                            {/* Display formatted currency value */}
+                            {Number(value).toLocaleString('en-IN', {
+                              style: 'currency',
+                              currency: 'INR',
+                              minimumFractionDigits: 0, // No decimal places for slice label
+                              maximumFractionDigits: 0,
+                            })}
                           </text>
                         );
                       }}
                     >
-                      {chartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                      {chartData.map((entry) => (
+                        <Cell key={`cell-${entry.name}`} fill={entry.fill} />
                       ))}
                     </Pie>
                     <ChartLegend content={<ChartLegendContent nameKey="name" />} />
@@ -294,3 +312,4 @@ export function EmiCalculatorForm() {
     </Card>
   );
 }
+
