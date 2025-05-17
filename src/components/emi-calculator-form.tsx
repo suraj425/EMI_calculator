@@ -15,9 +15,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { TrendingUp } from "lucide-react";
-import { PieChart, Pie, Cell } from "recharts";
+import { PieChart, Pie, Cell } from "recharts"; // Cell might not be needed if we remove explicit mapping
 import {
   ChartContainer,
   ChartTooltip,
@@ -50,14 +50,14 @@ export function EmiCalculatorForm() {
   const [emi, setEmi] = useState<string | null>(null);
   const [totalInterest, setTotalInterest] = useState<string | null>(null);
   const [totalPayment, setTotalPayment] = useState<string | null>(null);
-  const [chartData, setChartData] = useState<{ name: string; value: number; fill: string; }[] | null>(null);
+  const [chartData, setChartData] = useState<{ name: string; value: number; }[] | null>(null); // Removed 'fill' from type
   const [principalAmountForChart, setPrincipalAmountForChart] = useState<number>(0);
   const [totalInterestForChart, setTotalInterestForChart] = useState<number>(0);
 
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    mode: "onChange", // onChange mode is fine if useEffect is well-managed or calculations are manual
+    mode: "onChange", 
     defaultValues: {
       loanAmount: 100000,
       interestRate: 7.5,
@@ -69,17 +69,10 @@ export function EmiCalculatorForm() {
     const monthlyRate = annualRate / 12 / 100;
     const tenureMonths = tenureYears * 12;
 
-    const currencyFormattingOptions: Intl.NumberFormatOptions = {
-      style: "currency",
-      currency: "INR",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    };
      const plainFormattingOptions: Intl.NumberFormatOptions = {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     };
-
 
     if (principal > 0 && tenureMonths > 0 && annualRate >= 0) {
       let emiValueNum: number;
@@ -114,8 +107,8 @@ export function EmiCalculatorForm() {
       setTotalInterestForChart(totalInterestNum);
       
       setChartData([
-        { name: 'principal', value: principal, fill: chartConfig.principal.color },
-        { name: 'interest', value: totalInterestNum, fill: chartConfig.interest.color }
+        { name: 'principal', value: principal }, // Removed 'fill'
+        { name: 'interest', value: totalInterestNum } // Removed 'fill'
       ]);
 
     } else {
@@ -129,12 +122,11 @@ export function EmiCalculatorForm() {
   };
 
   const handleCalculateClick = async () => {
-    const isFormValid = await form.trigger(); // Validate all fields
+    const isFormValid = await form.trigger(); 
     if (isFormValid) {
       const values = form.getValues();
       performCalculation(values.loanAmount, values.interestRate, values.loanTerm);
     } else {
-      // Clear results if form is invalid after button click
       setEmi(null);
       setTotalInterest(null);
       setTotalPayment(null);
@@ -255,7 +247,7 @@ export function EmiCalculatorForm() {
                     <Pie
                       data={chartData}
                       dataKey="value"
-                      nameKey="name"
+                      nameKey="name" // This should allow ChartContainer to apply themed colors
                       cx="50%"
                       cy="50%"
                       outerRadius={"70%"}
@@ -266,7 +258,6 @@ export function EmiCalculatorForm() {
                         const x = cx + radius * Math.cos(-midAngle * RADIAN);
                         const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-                        // If the slice is too small, don't show the label to prevent clutter
                         if (percent < 0.08) { 
                           return null;
                         }
@@ -275,24 +266,21 @@ export function EmiCalculatorForm() {
                           <text
                             x={x}
                             y={y}
-                            className="fill-primary-foreground text-[10px] font-medium" // Smaller text for slice label
+                            className="fill-primary-foreground text-[10px] font-medium" 
                             textAnchor={x > cx ? 'start' : 'end'}
                             dominantBaseline="central"
                           >
-                            {/* Display formatted currency value */}
                             {Number(value).toLocaleString('en-IN', {
                               style: 'currency',
                               currency: 'INR',
-                              minimumFractionDigits: 0, // No decimal places for slice label
+                              minimumFractionDigits: 0, 
                               maximumFractionDigits: 0,
                             })}
                           </text>
                         );
                       }}
                     >
-                      {chartData.map((entry) => (
-                        <Cell key={`cell-${entry.name}`} fill={entry.fill} />
-                      ))}
+                      {/* Removed explicit <Cell> mapping. ChartContainer should handle colors. */}
                     </Pie>
                     <ChartLegend content={<ChartLegendContent nameKey="name" />} />
                   </PieChart>
@@ -312,4 +300,3 @@ export function EmiCalculatorForm() {
     </Card>
   );
 }
-
