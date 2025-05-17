@@ -27,8 +27,8 @@ body {
     --border: 205 30% 85%; /* Blue-Gray Border */
     --input: 205 40% 92%; /* Very Light Blue Input BG */
     --ring: 205 65% 62%; /* Primary Color for Ring */
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
+    --chart-1: 145 60% 80%; /* Pastel Green */
+    --chart-2: 55 100% 85%; /* Pastel Yellow */
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
@@ -62,8 +62,8 @@ body {
     --border: 205 20% 25%;
     --input: 205 20% 20%;
     --ring: 205 65% 70%; /* Brighter Primary for Ring */
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
+    --chart-1: 145 50% 60%; /* Darker Pastel Green for dark mode */
+    --chart-2: 55 70% 65%; /* Darker Pastel Yellow for dark mode */
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
