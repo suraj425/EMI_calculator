@@ -15,9 +15,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TrendingUp } from "lucide-react";
-import { PieChart, Pie, Cell } from "recharts"; // Import Cell
+import { PieChart, Pie, Cell } from "recharts";
 import {
   ChartContainer,
   ChartTooltip,
@@ -50,14 +50,14 @@ export function EmiCalculatorForm() {
   const [emi, setEmi] = useState<string | null>(null);
   const [totalInterest, setTotalInterest] = useState<string | null>(null);
   const [totalPayment, setTotalPayment] = useState<string | null>(null);
-  const [chartData, setChartData] = useState<{ name: string; value: number; fill: string; }[] | null>(null); // Added fill to chartData items
+  const [chartData, setChartData] = useState<{ name: string; value: number; fill: string; }[] | null>(null);
   const [principalAmountForChart, setPrincipalAmountForChart] = useState<number>(0);
   const [totalInterestForChart, setTotalInterestForChart] = useState<number>(0);
 
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    mode: "onChange", 
+    mode: "onChange",
     defaultValues: {
       loanAmount: 100000,
       interestRate: 7.5,
@@ -68,36 +68,44 @@ export function EmiCalculatorForm() {
   const performCalculation = (principal: number, annualRate: number, tenureYears: number) => {
     const monthlyRate = annualRate / 12 / 100;
     const tenureMonths = tenureYears * 12;
-    
+
     const plainFormattingOptions: Intl.NumberFormatOptions = {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     };
 
-    if (principal > 0 && tenureMonths > 0 && annualRate > 0) {
+    if (principal > 0 && tenureMonths > 0 && annualRate >= 0) { // Allow 0 rate for direct calculation
       let emiValueNum: number;
       let totalPaymentNum: number;
       let totalInterestNum: number;
 
-      if (monthlyRate === 0) { 
+      if (monthlyRate === 0 && annualRate === 0) { // Handle 0% interest rate specifically
         emiValueNum = principal / tenureMonths;
         totalInterestNum = 0;
         totalPaymentNum = principal;
-      } else {
+      } else if (monthlyRate > 0) {
         emiValueNum =
           (principal * monthlyRate * Math.pow(1 + monthlyRate, tenureMonths)) /
           (Math.pow(1 + monthlyRate, tenureMonths) - 1);
         totalPaymentNum = emiValueNum * tenureMonths;
         totalInterestNum = totalPaymentNum - principal;
+      } else { // Invalid rate scenario if not 0 and not positive monthlyRate
+        setEmi(null);
+        setTotalInterest(null);
+        setTotalPayment(null);
+        setChartData(null);
+        setPrincipalAmountForChart(0);
+        setTotalInterestForChart(0);
+        return;
       }
-      
+
       setEmi(emiValueNum.toLocaleString('en-IN', plainFormattingOptions));
       setTotalInterest(totalInterestNum.toLocaleString('en-IN', plainFormattingOptions));
       setTotalPayment(totalPaymentNum.toLocaleString('en-IN', plainFormattingOptions));
-      
+
       setPrincipalAmountForChart(principal);
       setTotalInterestForChart(totalInterestNum);
-      
+
       setChartData([
         { name: 'principal', value: principal, fill: chartConfig.principal.color },
         { name: 'interest', value: totalInterestNum, fill: chartConfig.interest.color }
@@ -114,7 +122,7 @@ export function EmiCalculatorForm() {
   };
 
   const handleCalculateClick = async () => {
-    const isFormValid = await form.trigger(); 
+    const isFormValid = await form.trigger();
     if (isFormValid) {
       const values = form.getValues();
       performCalculation(values.loanAmount, values.interestRate, values.loanTerm);
@@ -181,15 +189,15 @@ export function EmiCalculatorForm() {
                 </FormItem>
               )}
             />
-            <Button 
-              type="button" 
+            <Button
+              type="button"
               onClick={handleCalculateClick}
               className="w-full"
             >
               Calculate EMI
             </Button>
           </CardContent>
-          {emi !== null && (
+          {emi !== null && chartData && (
             <CardFooter className="flex flex-col md:flex-row md:items-start gap-x-6 gap-y-4 bg-muted/50 p-6 rounded-b-lg">
               {/* Left Column: Textual Details */}
               <div className="flex-1 space-y-4 w-full">
@@ -216,64 +224,62 @@ export function EmiCalculatorForm() {
               </div>
 
               {/* Right Column: Pie Chart */}
-              {chartData && (
-                <div className="w-full md:w-[280px] shrink-0">
-                  <h3 className="text-lg font-semibold text-center mb-2 text-foreground">
-                    Loan Breakdown
-                  </h3>
-                  <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[280px] w-full">
-                    <PieChart accessibilityLayer>
-                      <ChartTooltip
-                        cursor={false}
-                        content={<ChartTooltipContent 
-                                    hideLabel 
-                                    nameKey="name" 
-                                    formatter={(value, name, item) => (
-                                      <div>
-                                        <p className="font-medium">{chartConfig[item.payload.name as keyof typeof chartConfig].label}</p>
-                                        <p className="text-muted-foreground">₹{Number(value).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                                      </div>
-                                    )}
-                                />}
-                      />
-                      <Pie
-                        data={chartData}
-                        dataKey="value"
-                        nameKey="name" 
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={"70%"} 
-                        labelLine={false}
-                        label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
-                          const RADIAN = Math.PI / 180;
-                          const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-                          const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                          const y = cy + radius * Math.sin(-midAngle * RADIAN);
+              <div className="w-full md:w-[280px] shrink-0">
+                <h3 className="text-lg font-semibold text-center mb-2 text-foreground">
+                  Loan Breakdown
+                </h3>
+                <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[280px] w-full">
+                  <PieChart accessibilityLayer>
+                    <ChartTooltip
+                      cursor={false}
+                      content={<ChartTooltipContent
+                                  hideLabel
+                                  nameKey="name"
+                                  formatter={(value, name, item) => (
+                                    <div>
+                                      <p className="font-medium">{chartConfig[item.payload.name as keyof typeof chartConfig].label}</p>
+                                      <p className="text-muted-foreground">₹{Number(value).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                    </div>
+                                  )}
+                              />}
+                    />
+                    <Pie
+                      data={chartData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={"70%"}
+                      labelLine={false}
+                      label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+                        const RADIAN = Math.PI / 180;
+                        const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                        const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                        const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-                          if (percent < 0.05) return null; 
+                        if (percent < 0.05) return null;
 
-                          return (
-                            <text
-                              x={x}
-                              y={y}
-                              className="fill-primary-foreground text-xs font-medium"
-                              textAnchor={x > cx ? 'start' : 'end'}
-                              dominantBaseline="central"
-                            >
-                              {`${(percent * 100).toFixed(0)}%`}
-                            </text>
-                          );
-                        }}
-                      >
-                        {chartData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.fill} />
-                        ))}
-                      </Pie>
-                      <ChartLegend content={<ChartLegendContent nameKey="name" />} />
-                    </PieChart>
-                  </ChartContainer>
-                </div>
-              )}
+                        return (
+                          <text
+                            x={x}
+                            y={y}
+                            className="fill-primary-foreground text-xs font-medium"
+                            textAnchor={x > cx ? 'start' : 'end'}
+                            dominantBaseline="central"
+                          >
+                            {`${(percent * 100).toFixed(0)}%`}
+                          </text>
+                        );
+                      }}
+                    >
+                      {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                      ))}
+                    </Pie>
+                    <ChartLegend content={<ChartLegendContent nameKey="name" />} />
+                  </PieChart>
+                </ChartContainer>
+              </div>
             </CardFooter>
           )}
           {emi === null && (
