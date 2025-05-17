@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -53,21 +54,26 @@ export function EmiCalculatorForm() {
         const monthlyRate = annualRate / 12 / 100;
         const tenureMonths = tenureYears * 12;
 
+        const formattingOptions: Intl.NumberFormatOptions = {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        };
+
         if (principal > 0 && tenureMonths > 0) {
           if (monthlyRate === 0) { // Interest-free loan
             const emiValue = principal / tenureMonths;
-            setEmi(emiValue.toFixed(2));
-            setTotalInterest("0.00");
-            setTotalPayment(principal.toFixed(2));
+            setEmi(emiValue.toLocaleString('en-IN', formattingOptions));
+            setTotalInterest((0).toLocaleString('en-IN', formattingOptions));
+            setTotalPayment(principal.toLocaleString('en-IN', formattingOptions));
           } else {
             const emiValue =
               (principal * monthlyRate * Math.pow(1 + monthlyRate, tenureMonths)) /
               (Math.pow(1 + monthlyRate, tenureMonths) - 1);
-            setEmi(emiValue.toFixed(2));
+            setEmi(emiValue.toLocaleString('en-IN', formattingOptions));
             
             const totalPaid = emiValue * tenureMonths;
-            setTotalPayment(totalPaid.toFixed(2));
-            setTotalInterest((totalPaid - principal).toFixed(2));
+            setTotalPayment(totalPaid.toLocaleString('en-IN', formattingOptions));
+            setTotalInterest((totalPaid - principal).toLocaleString('en-IN', formattingOptions));
           }
         } else {
           setEmi(null);
@@ -156,7 +162,7 @@ export function EmiCalculatorForm() {
               <div className="w-full grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-muted-foreground">Principal Amount:</p>
-                  <p className="font-semibold text-foreground">₹{Number(watchedValues.loanAmount).toLocaleString('en-IN')}</p>
+                  <p className="font-semibold text-foreground">₹{Number(watchedValues.loanAmount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Total Interest:</p>
