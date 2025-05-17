@@ -256,14 +256,7 @@ export function EmiCalculatorForm() {
                             </text>
                           );
                         }}
-                        fill="hsl(var(--primary))" // Default fill, individual cells can override
-                      >
-                        {chartData.map((entry, index) => (
-                           <PieChart key={`cell-${index}`} data={[{value: entry.value}]} dataKey="value" nameKey="name" >
-                             <Pie dataKey="value" nameKey="name" fill={chartConfig[entry.name as keyof typeof chartConfig].color} />
-                           </PieChart>
-                        ))}
-                      </Pie>
+                      />
                       <ChartLegend content={<ChartLegendContent nameKey="name" />} />
                     </PieChart>
                   </ChartContainer>
@@ -283,4 +276,3 @@ export function EmiCalculatorForm() {
     </Card>
   );
 }
-
