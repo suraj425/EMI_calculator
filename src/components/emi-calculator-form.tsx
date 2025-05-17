@@ -15,9 +15,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TrendingUp } from "lucide-react";
-import { PieChart, Pie } from "recharts";
+import { PieChart, Pie, Cell } from "recharts"; // Import Cell
 import {
   ChartContainer,
   ChartTooltip,
@@ -50,14 +50,14 @@ export function EmiCalculatorForm() {
   const [emi, setEmi] = useState<string | null>(null);
   const [totalInterest, setTotalInterest] = useState<string | null>(null);
   const [totalPayment, setTotalPayment] = useState<string | null>(null);
-  const [chartData, setChartData] = useState<{ name: string; value: number; }[] | null>(null);
+  const [chartData, setChartData] = useState<{ name: string; value: number; fill: string; }[] | null>(null); // Added fill to chartData items
   const [principalAmountForChart, setPrincipalAmountForChart] = useState<number>(0);
   const [totalInterestForChart, setTotalInterestForChart] = useState<number>(0);
 
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    mode: "onChange", // Recalculate on change for live validation feedback
+    mode: "onChange", 
     defaultValues: {
       loanAmount: 100000,
       interestRate: 7.5,
@@ -65,88 +65,68 @@ export function EmiCalculatorForm() {
     },
   });
 
-  const loanAmountValue = form.watch("loanAmount");
-  const interestRateValue = form.watch("interestRate");
-  const loanTermValue = form.watch("loanTerm");
-  const isValid = form.formState.isValid;
-
-  useEffect(() => {
-    const calculateAndSetEmi = () => {
-      if (isValid && typeof loanAmountValue === 'number' && typeof interestRateValue === 'number' && typeof loanTermValue === 'number') {
-        const principal = loanAmountValue;
-        const annualRate = interestRateValue;
-        const tenureYears = loanTermValue;
-
-        const monthlyRate = annualRate / 12 / 100;
-        const tenureMonths = tenureYears * 12;
-        
-        const plainFormattingOptions: Intl.NumberFormatOptions = {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        };
-
-
-        if (principal > 0 && tenureMonths > 0) {
-          let emiValueNum: number;
-          let totalPaymentNum: number;
-          let totalInterestNum: number;
-
-          if (monthlyRate === 0) { // Interest-free loan
-            emiValueNum = principal / tenureMonths;
-            totalInterestNum = 0;
-            totalPaymentNum = principal;
-          } else {
-            emiValueNum =
-              (principal * monthlyRate * Math.pow(1 + monthlyRate, tenureMonths)) /
-              (Math.pow(1 + monthlyRate, tenureMonths) - 1);
-            totalPaymentNum = emiValueNum * tenureMonths;
-            totalInterestNum = totalPaymentNum - principal;
-          }
-          
-          setEmi(emiValueNum.toLocaleString('en-IN', plainFormattingOptions));
-          setTotalInterest(totalInterestNum.toLocaleString('en-IN', plainFormattingOptions));
-          setTotalPayment(totalPaymentNum.toLocaleString('en-IN', plainFormattingOptions));
-          
-          setPrincipalAmountForChart(principal);
-          setTotalInterestForChart(totalInterestNum);
-          
-          setChartData([
-            { name: 'principal', value: principal },
-            { name: 'interest', value: totalInterestNum }
-          ]);
-
-        } else {
-          setEmi(null);
-          setTotalInterest(null);
-          setTotalPayment(null);
-          setChartData(null);
-          setPrincipalAmountForChart(0);
-          setTotalInterestForChart(0);
-        }
-      } else {
-        setEmi(null);
-        setTotalInterest(null);
-        setTotalPayment(null);
-        setChartData(null);
-        setPrincipalAmountForChart(0);
-        setTotalInterestForChart(0);
-      }
+  const performCalculation = (principal: number, annualRate: number, tenureYears: number) => {
+    const monthlyRate = annualRate / 12 / 100;
+    const tenureMonths = tenureYears * 12;
+    
+    const plainFormattingOptions: Intl.NumberFormatOptions = {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     };
-    // Only run calculation if form is valid and values are numbers
-    // This useEffect handles the recalculation when dependencies change
-    // which can be triggered by direct input or by form.trigger()
-    if (form.formState.isMounted) { // Avoid running on initial mount before form.trigger() in the other useEffect
-        calculateAndSetEmi();
+
+    if (principal > 0 && tenureMonths > 0 && annualRate > 0) {
+      let emiValueNum: number;
+      let totalPaymentNum: number;
+      let totalInterestNum: number;
+
+      if (monthlyRate === 0) { 
+        emiValueNum = principal / tenureMonths;
+        totalInterestNum = 0;
+        totalPaymentNum = principal;
+      } else {
+        emiValueNum =
+          (principal * monthlyRate * Math.pow(1 + monthlyRate, tenureMonths)) /
+          (Math.pow(1 + monthlyRate, tenureMonths) - 1);
+        totalPaymentNum = emiValueNum * tenureMonths;
+        totalInterestNum = totalPaymentNum - principal;
+      }
+      
+      setEmi(emiValueNum.toLocaleString('en-IN', plainFormattingOptions));
+      setTotalInterest(totalInterestNum.toLocaleString('en-IN', plainFormattingOptions));
+      setTotalPayment(totalPaymentNum.toLocaleString('en-IN', plainFormattingOptions));
+      
+      setPrincipalAmountForChart(principal);
+      setTotalInterestForChart(totalInterestNum);
+      
+      setChartData([
+        { name: 'principal', value: principal, fill: chartConfig.principal.color },
+        { name: 'interest', value: totalInterestNum, fill: chartConfig.interest.color }
+      ]);
+
+    } else {
+      setEmi(null);
+      setTotalInterest(null);
+      setTotalPayment(null);
+      setChartData(null);
+      setPrincipalAmountForChart(0);
+      setTotalInterestForChart(0);
     }
-  }, [loanAmountValue, interestRateValue, loanTermValue, isValid, form.formState.isMounted]);
+  };
 
-  useEffect(() => {
-     // Trigger validation on mount to calculate EMI with default values
-     // This will set 'isValid' and other form states, prompting the above useEffect to calculate
-     form.trigger();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.trigger]); // form.trigger should be stable, but including it if ESLint complains
-
+  const handleCalculateClick = async () => {
+    const isFormValid = await form.trigger(); 
+    if (isFormValid) {
+      const values = form.getValues();
+      performCalculation(values.loanAmount, values.interestRate, values.loanTerm);
+    } else {
+      setEmi(null);
+      setTotalInterest(null);
+      setTotalPayment(null);
+      setChartData(null);
+      setPrincipalAmountForChart(0);
+      setTotalInterestForChart(0);
+    }
+  };
 
   return (
     <Card className="w-full max-w-2xl mx-auto shadow-xl">
@@ -203,15 +183,13 @@ export function EmiCalculatorForm() {
             />
             <Button 
               type="button" 
-              onClick={async () => {
-                await form.trigger(); // Trigger validation, the main useEffect will handle recalculation
-              }} 
+              onClick={handleCalculateClick}
               className="w-full"
             >
               Calculate EMI
             </Button>
           </CardContent>
-          {(emi !== null && totalInterest !== null && totalPayment !== null && typeof loanAmountValue === 'number') && (
+          {emi !== null && (
             <CardFooter className="flex flex-col md:flex-row md:items-start gap-x-6 gap-y-4 bg-muted/50 p-6 rounded-b-lg">
               {/* Left Column: Textual Details */}
               <div className="flex-1 space-y-4 w-full">
@@ -286,7 +264,11 @@ export function EmiCalculatorForm() {
                             </text>
                           );
                         }}
-                      />
+                      >
+                        {chartData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                      </Pie>
                       <ChartLegend content={<ChartLegendContent nameKey="name" />} />
                     </PieChart>
                   </ChartContainer>
@@ -306,5 +288,3 @@ export function EmiCalculatorForm() {
     </Card>
   );
 }
-
-    
