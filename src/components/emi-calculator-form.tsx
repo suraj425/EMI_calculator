@@ -50,7 +50,10 @@ export function EmiCalculatorForm() {
   const [emi, setEmi] = useState<string | null>(null);
   const [totalInterest, setTotalInterest] = useState<string | null>(null);
   const [totalPayment, setTotalPayment] = useState<string | null>(null);
-  const [chartData, setChartData] = useState<{ name: string; value: number; }[] | null>(null);
+  const [chartData, setChartData] = useState<{ name: string; value: number; fill: string; }[] | null>(null);
+  const [principalAmountForChart, setPrincipalAmountForChart] = useState<number>(0);
+  const [totalInterestForChart, setTotalInterestForChart] = useState<number>(0);
+
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -104,9 +107,12 @@ export function EmiCalculatorForm() {
           setTotalInterest(totalInterestNum.toLocaleString('en-IN', plainFormattingOptions));
           setTotalPayment(totalPaymentNum.toLocaleString('en-IN', plainFormattingOptions));
           
+          setPrincipalAmountForChart(principal);
+          setTotalInterestForChart(totalInterestNum);
+          
           setChartData([
-            { name: 'principal', value: principal },
-            { name: 'interest', value: totalInterestNum }
+            { name: 'principal', value: principal, fill: chartConfig.principal.color },
+            { name: 'interest', value: totalInterestNum, fill: chartConfig.interest.color }
           ]);
 
         } else {
@@ -114,12 +120,16 @@ export function EmiCalculatorForm() {
           setTotalInterest(null);
           setTotalPayment(null);
           setChartData(null);
+          setPrincipalAmountForChart(0);
+          setTotalInterestForChart(0);
         }
       } else {
         setEmi(null);
         setTotalInterest(null);
         setTotalPayment(null);
         setChartData(null);
+        setPrincipalAmountForChart(0);
+        setTotalInterestForChart(0);
       }
     };
     calculateAndSetEmi();
@@ -133,7 +143,7 @@ export function EmiCalculatorForm() {
 
 
   return (
-    <Card className="w-full max-w-lg mx-auto shadow-xl">
+    <Card className="w-full max-w-2xl mx-auto shadow-xl"> {/* Increased max-width */}
       <CardHeader>
         <CardTitle className="text-2xl font-semibold text-primary flex items-center gap-2">
           <TrendingUp className="h-6 w-6" />
@@ -187,29 +197,34 @@ export function EmiCalculatorForm() {
             />
           </CardContent>
           {(emi !== null && totalInterest !== null && totalPayment !== null && typeof loanAmountValue === 'number') && (
-            <CardFooter className="flex flex-col items-stretch space-y-4 bg-muted/50 p-6 rounded-b-lg">
-              <div className="w-full">
-                <p className="text-lg font-medium text-foreground">Monthly EMI:</p>
-                <p className="text-3xl font-bold text-primary">
-                  ₹{emi}
-                </p>
+            <CardFooter className="flex flex-col md:flex-row md:items-start gap-x-6 gap-y-4 bg-muted/50 p-6 rounded-b-lg">
+              {/* Left Column: Textual Details */}
+              <div className="flex-1 space-y-4 w-full">
+                <div className="w-full">
+                  <p className="text-lg font-medium text-foreground">Monthly EMI:</p>
+                  <p className="text-3xl font-bold text-primary">
+                    ₹{emi}
+                  </p>
+                </div>
+                <div className="w-full grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-muted-foreground">Principal Amount:</p>
+                    <p className="font-semibold text-foreground">₹{Number(principalAmountForChart).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Total Interest:</p>
+                    <p className="font-semibold text-foreground">₹{Number(totalInterestForChart).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                  </div>
+                  <div className="col-span-2">
+                    <p className="text-muted-foreground">Total Payment (Principal + Interest):</p>
+                    <p className="font-semibold text-foreground">₹{totalPayment}</p>
+                  </div>
+                </div>
               </div>
-              <div className="w-full grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="text-muted-foreground">Principal Amount:</p>
-                  <p className="font-semibold text-foreground">₹{Number(loanAmountValue).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Total Interest:</p>
-                  <p className="font-semibold text-foreground">₹{totalInterest}</p>
-                </div>
-                <div className="col-span-2">
-                  <p className="text-muted-foreground">Total Payment (Principal + Interest):</p>
-                  <p className="font-semibold text-foreground">₹{totalPayment}</p>
-                </div>
-              </div>
+
+              {/* Right Column: Pie Chart */}
               {chartData && (
-                <div className="mt-6 pt-6 border-t border-border w-full">
+                <div className="w-full md:w-[280px] shrink-0">
                   <h3 className="text-lg font-semibold text-center mb-2 text-foreground">
                     Loan Breakdown
                   </h3>
@@ -231,12 +246,12 @@ export function EmiCalculatorForm() {
                       <Pie
                         data={chartData}
                         dataKey="value"
-                        nameKey="name"
+                        nameKey="name" // This 'name' maps to chartConfig keys for colors via CSS variables
                         cx="50%"
                         cy="50%"
                         outerRadius={"70%"} 
                         labelLine={false}
-                        label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, name: sliceName }) => {
+                        label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
                           const RADIAN = Math.PI / 180;
                           const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
                           const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -276,3 +291,4 @@ export function EmiCalculatorForm() {
     </Card>
   );
 }
+
