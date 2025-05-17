@@ -17,6 +17,15 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { TrendingUp } from "lucide-react";
+import { PieChart, Pie } from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+  type ChartConfig
+} from "@/components/ui/chart";
 
 const formSchema = z.object({
   loanAmount: z.coerce.number({invalid_type_error: "Please enter a valid amount."}).positive({ message: "Loan amount must be positive." }).min(1000, "Minimum loan amount is 1,000."),
@@ -26,10 +35,22 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+const chartConfig = {
+  principal: {
+    label: "Principal Amount",
+    color: "hsl(var(--chart-1))",
+  },
+  interest: {
+    label: "Total Interest",
+    color: "hsl(var(--chart-2))",
+  },
+} satisfies ChartConfig;
+
 export function EmiCalculatorForm() {
   const [emi, setEmi] = useState<string | null>(null);
   const [totalInterest, setTotalInterest] = useState<string | null>(null);
   const [totalPayment, setTotalPayment] = useState<string | null>(null);
+  const [chartData, setChartData] = useState<{ name: string; value: number; }[] | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -57,40 +78,58 @@ export function EmiCalculatorForm() {
         const formattingOptions: Intl.NumberFormatOptions = {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
+          style: 'currency',
+          currency: 'INR',
+        };
+        
+        const plainFormattingOptions: Intl.NumberFormatOptions = {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
         };
 
+
         if (principal > 0 && tenureMonths > 0) {
+          let emiValueNum: number;
+          let totalPaymentNum: number;
+          let totalInterestNum: number;
+
           if (monthlyRate === 0) { // Interest-free loan
-            const emiValue = principal / tenureMonths;
-            setEmi(emiValue.toLocaleString('en-IN', formattingOptions));
-            setTotalInterest((0).toLocaleString('en-IN', formattingOptions));
-            setTotalPayment(principal.toLocaleString('en-IN', formattingOptions));
+            emiValueNum = principal / tenureMonths;
+            totalInterestNum = 0;
+            totalPaymentNum = principal;
           } else {
-            const emiValue =
+            emiValueNum =
               (principal * monthlyRate * Math.pow(1 + monthlyRate, tenureMonths)) /
               (Math.pow(1 + monthlyRate, tenureMonths) - 1);
-            setEmi(emiValue.toLocaleString('en-IN', formattingOptions));
-            
-            const totalPaid = emiValue * tenureMonths;
-            setTotalPayment(totalPaid.toLocaleString('en-IN', formattingOptions));
-            setTotalInterest((totalPaid - principal).toLocaleString('en-IN', formattingOptions));
+            totalPaymentNum = emiValueNum * tenureMonths;
+            totalInterestNum = totalPaymentNum - principal;
           }
+          
+          setEmi(emiValueNum.toLocaleString('en-IN', plainFormattingOptions));
+          setTotalInterest(totalInterestNum.toLocaleString('en-IN', plainFormattingOptions));
+          setTotalPayment(totalPaymentNum.toLocaleString('en-IN', plainFormattingOptions));
+          
+          setChartData([
+            { name: 'principal', value: principal },
+            { name: 'interest', value: totalInterestNum }
+          ]);
+
         } else {
           setEmi(null);
           setTotalInterest(null);
           setTotalPayment(null);
+          setChartData(null);
         }
       } else {
-        // Clear EMI if form is not valid or values are missing
         setEmi(null);
         setTotalInterest(null);
         setTotalPayment(null);
+        setChartData(null);
       }
     };
     calculateAndSetEmi();
   }, [watchedValues, form.formState.isValid]);
 
-  // Trigger initial calculation
   useEffect(() => {
      form.trigger();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -151,8 +190,8 @@ export function EmiCalculatorForm() {
               )}
             />
           </CardContent>
-          {emi !== null && totalInterest !== null && totalPayment !== null && (
-            <CardFooter className="flex flex-col items-start space-y-4 bg-muted/50 p-6 rounded-b-lg">
+          {(emi !== null && totalInterest !== null && totalPayment !== null) && (
+            <CardFooter className="flex flex-col items-stretch space-y-4 bg-muted/50 p-6 rounded-b-lg">
               <div className="w-full">
                 <p className="text-lg font-medium text-foreground">Monthly EMI:</p>
                 <p className="text-3xl font-bold text-primary">
@@ -173,6 +212,60 @@ export function EmiCalculatorForm() {
                   <p className="font-semibold text-foreground">₹{totalPayment}</p>
                 </div>
               </div>
+              {chartData && (
+                <div className="mt-6 pt-6 border-t border-border w-full">
+                  <h3 className="text-lg font-semibold text-center mb-2 text-foreground">
+                    Loan Breakdown
+                  </h3>
+                  <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[280px] w-full">
+                    <PieChart accessibilityLayer>
+                      <ChartTooltip
+                        cursor={false}
+                        content={<ChartTooltipContent 
+                                    hideLabel 
+                                    nameKey="name" 
+                                    formatter={(value, name, item) => (
+                                      <div>
+                                        <p className="font-medium">{chartConfig[item.payload.name as keyof typeof chartConfig].label}</p>
+                                        <p className="text-muted-foreground">₹{Number(value).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                      </div>
+                                    )}
+                                />}
+                      />
+                      <Pie
+                        data={chartData}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={"70%"} 
+                        labelLine={false}
+                        label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, name: sliceName }) => {
+                          const RADIAN = Math.PI / 180;
+                          const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                          const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                          const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+                          if (percent < 0.05) return null; 
+
+                          return (
+                            <text
+                              x={x}
+                              y={y}
+                              className="fill-primary-foreground text-xs font-medium"
+                              textAnchor={x > cx ? 'start' : 'end'}
+                              dominantBaseline="central"
+                            >
+                              {`${(percent * 100).toFixed(0)}%`}
+                            </text>
+                          );
+                        }}
+                      />
+                      <ChartLegend content={<ChartLegendContent nameKey="name" />} />
+                    </PieChart>
+                  </ChartContainer>
+                </div>
+              )}
             </CardFooter>
           )}
           {emi === null && (
