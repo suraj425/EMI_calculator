@@ -20,37 +20,87 @@ interface BankRate {
 }
 
 const bankRatesData: BankRate[] = [
+  // Top 5 Indian Banks
   {
-    id: "bank1",
-    name: "Prestige Financial",
-    interestRate: "7.2%",
-    applyLink: "https://example.com/prestige-financial-loan",
+    id: "sbi",
+    name: "State Bank of India (SBI)",
+    interestRate: "Starting at 11.15% p.a.",
+    applyLink: "https://sbi.co.in/web/personal-banking/loans/personal-loans",
     logoUrl: "https://placehold.co/40x40.png",
-    dataAiHint: "bank logo"
+    dataAiHint: "SBI logo"
   },
   {
-    id: "bank2",
-    name: "Capital Trust Bank",
-    interestRate: "7.5%",
-    applyLink: "https://example.com/capital-trust-loan",
+    id: "hdfc",
+    name: "HDFC Bank",
+    interestRate: "Starting at 10.50% p.a.",
+    applyLink: "https://www.hdfcbank.com/personal/borrow/popular-loans/personal-loan",
     logoUrl: "https://placehold.co/40x40.png",
-    dataAiHint: "financial building"
+    dataAiHint: "HDFC logo"
   },
   {
-    id: "bank3",
-    name: "Horizon Union Bank",
-    interestRate: "7.8%",
-    applyLink: "https://example.com/horizon-union-loan",
+    id: "icici",
+    name: "ICICI Bank",
+    interestRate: "Starting at 10.80% p.a.",
+    applyLink: "https://www.icicibank.com/personal-banking/loans/personal-loan",
     logoUrl: "https://placehold.co/40x40.png",
-    dataAiHint: "modern bank"
+    dataAiHint: "ICICI logo"
   },
   {
-    id: "bank4",
-    name: "Summit Credit Bank",
-    interestRate: "8.0%",
-    applyLink: "https://example.com/summit-credit-loan",
+    id: "axis",
+    name: "Axis Bank",
+    interestRate: "Starting at 10.99% p.a.",
+    applyLink: "https://www.axisbank.com/retail/loans/personal-loan",
     logoUrl: "https://placehold.co/40x40.png",
-    dataAiHint: "bank icon"
+    dataAiHint: "Axis Bank logo"
+  },
+  {
+    id: "kotak",
+    name: "Kotak Mahindra Bank",
+    interestRate: "Starting at 10.99% p.a.",
+    applyLink: "https://www.kotak.com/en/personal-banking/loans/personal-loan.html",
+    logoUrl: "https://placehold.co/40x40.png",
+    dataAiHint: "Kotak Bank logo"
+  },
+  // 5 Finance Banks / NBFCs
+  {
+    id: "bajaj",
+    name: "Bajaj Finserv",
+    interestRate: "Starting at 11.00% p.a.",
+    applyLink: "https://www.bajajfinserv.in/personal-loan",
+    logoUrl: "https://placehold.co/40x40.png",
+    dataAiHint: "Bajaj Finserv logo"
+  },
+  {
+    id: "tata",
+    name: "Tata Capital",
+    interestRate: "Starting at 10.99% p.a.",
+    applyLink: "https://www.tatacapital.com/personal-loan.html",
+    logoUrl: "https://placehold.co/40x40.png",
+    dataAiHint: "Tata Capital logo"
+  },
+  {
+    id: "au",
+    name: "AU Small Finance Bank",
+    interestRate: "Starting at 12.00% p.a.", // Indicative, actual rates vary
+    applyLink: "https://www.aubank.in/personal-banking/personal-loan",
+    logoUrl: "https://placehold.co/40x40.png",
+    dataAiHint: "AU Bank logo"
+  },
+  {
+    id: "ujjivan",
+    name: "Ujjivan Small Finance Bank",
+    interestRate: "Starting at 11.49% p.a.",
+    applyLink: "https://www.ujjivansfb.in/personal-unsecured-loan-for-salaried",
+    logoUrl: "https://placehold.co/40x40.png",
+    dataAiHint: "Ujjivan Bank logo"
+  },
+  {
+    id: "equitas",
+    name: "Equitas Small Finance Bank",
+    interestRate: "Starting at 13.00% p.a.", // Indicative, actual rates vary
+    applyLink: "https://www.equitasbank.com/personal-loan",
+    logoUrl: "https://placehold.co/40x40.png",
+    dataAiHint: "Equitas Bank logo"
   },
 ];
 
@@ -63,7 +113,7 @@ export function BankInterestRatesTable() {
           Compare Interest Rates
         </CardTitle>
         <CardDescription>
-          Find the best loan offers from leading banks. Rates are indicative.
+          Find loan offers from leading Indian banks and finance companies. Rates are indicative.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -72,7 +122,7 @@ export function BankInterestRatesTable() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[100px] hidden sm:table-cell">Logo</TableHead>
-                <TableHead>Bank Name</TableHead>
+                <TableHead>Bank / Company Name</TableHead>
                 <TableHead className="text-center">Interest Rate (p.a.)</TableHead>
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
