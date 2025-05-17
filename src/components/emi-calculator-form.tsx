@@ -62,25 +62,20 @@ export function EmiCalculatorForm() {
     },
   });
 
-  const watchedValues = form.watch();
+  const loanAmountValue = form.watch("loanAmount");
+  const interestRateValue = form.watch("interestRate");
+  const loanTermValue = form.watch("loanTerm");
+  const isValid = form.formState.isValid;
 
   useEffect(() => {
     const calculateAndSetEmi = () => {
-      const { loanAmount, interestRate, loanTerm } = watchedValues;
-      if (form.formState.isValid && loanAmount && interestRate && loanTerm) {
-        const principal = Number(loanAmount);
-        const annualRate = Number(interestRate);
-        const tenureYears = Number(loanTerm);
+      if (isValid && typeof loanAmountValue === 'number' && typeof interestRateValue === 'number' && typeof loanTermValue === 'number') {
+        const principal = loanAmountValue;
+        const annualRate = interestRateValue;
+        const tenureYears = loanTermValue;
 
         const monthlyRate = annualRate / 12 / 100;
         const tenureMonths = tenureYears * 12;
-
-        const formattingOptions: Intl.NumberFormatOptions = {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-          style: 'currency',
-          currency: 'INR',
-        };
         
         const plainFormattingOptions: Intl.NumberFormatOptions = {
           minimumFractionDigits: 2,
@@ -128,9 +123,10 @@ export function EmiCalculatorForm() {
       }
     };
     calculateAndSetEmi();
-  }, [watchedValues, form.formState.isValid]);
+  }, [loanAmountValue, interestRateValue, loanTermValue, isValid]);
 
   useEffect(() => {
+     // Trigger validation on mount to calculate EMI with default values
      form.trigger();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -190,7 +186,7 @@ export function EmiCalculatorForm() {
               )}
             />
           </CardContent>
-          {(emi !== null && totalInterest !== null && totalPayment !== null) && (
+          {(emi !== null && totalInterest !== null && totalPayment !== null && typeof loanAmountValue === 'number') && (
             <CardFooter className="flex flex-col items-stretch space-y-4 bg-muted/50 p-6 rounded-b-lg">
               <div className="w-full">
                 <p className="text-lg font-medium text-foreground">Monthly EMI:</p>
@@ -201,7 +197,7 @@ export function EmiCalculatorForm() {
               <div className="w-full grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-muted-foreground">Principal Amount:</p>
-                  <p className="font-semibold text-foreground">₹{Number(watchedValues.loanAmount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                  <p className="font-semibold text-foreground">₹{Number(loanAmountValue).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Total Interest:</p>
@@ -260,7 +256,14 @@ export function EmiCalculatorForm() {
                             </text>
                           );
                         }}
-                      />
+                        fill="hsl(var(--primary))" // Default fill, individual cells can override
+                      >
+                        {chartData.map((entry, index) => (
+                           <PieChart key={`cell-${index}`} data={[{value: entry.value}]} dataKey="value" nameKey="name" >
+                             <Pie dataKey="value" nameKey="name" fill={chartConfig[entry.name as keyof typeof chartConfig].color} />
+                           </PieChart>
+                        ))}
+                      </Pie>
                       <ChartLegend content={<ChartLegendContent nameKey="name" />} />
                     </PieChart>
                   </ChartContainer>
@@ -280,3 +283,4 @@ export function EmiCalculatorForm() {
     </Card>
   );
 }
+
