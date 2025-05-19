@@ -38,14 +38,11 @@ type FormValues = z.infer<typeof formSchema>;
 const chartConfig = {
   principal: {
     label: "Principal Amount",
-    color: "hsl(var(--chart-1))", // Green (from globals.css --chart-1)
+    color: "hsl(var(--accent))", // Use theme's accent color (Soft Green)
   },
   interest: {
     label: "Total Interest",
-    theme: { // Specific yellow for light and dark themes
-      light: "hsl(55, 100%, 75%)", // Pastel Yellow for light theme
-      dark: "hsl(55, 100%, 65%)",  // Brighter Yellow for dark theme
-    }
+    color: "hsl(var(--secondary))", // Use theme's secondary color (Lighter Primary Blue)
   },
 } satisfies ChartConfig;
 
@@ -60,14 +57,14 @@ export function EmiCalculatorForm() {
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    mode: "onChange", 
+    mode: "onChange",
     defaultValues: {
       loanAmount: 100000,
       interestRate: 7.5,
       loanTerm: 5,
     },
   });
-  
+
   const performCalculation = (principal: number, annualRate: number, tenureYears: number) => {
     const monthlyRate = annualRate / 12 / 100;
     const tenureMonths = tenureYears * 12;
@@ -82,7 +79,7 @@ export function EmiCalculatorForm() {
       let totalPaymentNum: number;
       let totalInterestNum: number;
 
-      if (monthlyRate === 0 && annualRate === 0) { 
+      if (monthlyRate === 0 && annualRate === 0) {
         emiValueNum = principal / tenureMonths;
         totalInterestNum = 0;
         totalPaymentNum = principal;
@@ -92,7 +89,7 @@ export function EmiCalculatorForm() {
           (Math.pow(1 + monthlyRate, tenureMonths) - 1);
         totalPaymentNum = emiValueNum * tenureMonths;
         totalInterestNum = totalPaymentNum - principal;
-      } else { 
+      } else {
         setEmi(null);
         setTotalInterest(null);
         setTotalPayment(null);
@@ -101,20 +98,20 @@ export function EmiCalculatorForm() {
         setTotalInterestForChart(0);
         return;
       }
-      
+
       setEmi(emiValueNum.toLocaleString('en-IN', plainFormattingOptions));
       setTotalInterest(totalInterestNum.toLocaleString('en-IN', plainFormattingOptions));
       setTotalPayment(totalPaymentNum.toLocaleString('en-IN', plainFormattingOptions));
 
       setPrincipalAmountForChart(principal);
       setTotalInterestForChart(totalInterestNum);
-      
+
       setChartData([
         { name: 'principal', value: principal },
         { name: 'interest', value: totalInterestNum }
       ]);
 
-    } else { 
+    } else {
       setEmi(null);
       setTotalInterest(null);
       setTotalPayment(null);
@@ -125,7 +122,7 @@ export function EmiCalculatorForm() {
   };
 
   const handleCalculateClick = async () => {
-    const isFormValid = await form.trigger(); 
+    const isFormValid = await form.trigger();
     if (isFormValid) {
       const values = form.getValues();
       performCalculation(values.loanAmount, values.interestRate, values.loanTerm);
@@ -248,7 +245,7 @@ export function EmiCalculatorForm() {
                     <Pie
                       data={chartData}
                       dataKey="value"
-                      nameKey="name" 
+                      nameKey="name"
                       cx="50%"
                       cy="50%"
                       outerRadius={"70%"}
@@ -259,7 +256,7 @@ export function EmiCalculatorForm() {
                         const x = cx + radius * Math.cos(-midAngle * RADIAN);
                         const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-                        if (percent < 0.08) { 
+                        if (percent < 0.08) {
                           return null;
                         }
 
@@ -267,14 +264,14 @@ export function EmiCalculatorForm() {
                           <text
                             x={x}
                             y={y}
-                            className="fill-primary-foreground text-[10px] font-medium" 
+                            className="fill-primary-foreground text-[10px] font-medium"
                             textAnchor={x > cx ? 'start' : 'end'}
                             dominantBaseline="central"
                           >
                             {Number(value).toLocaleString('en-IN', {
                               style: 'currency',
                               currency: 'INR',
-                              minimumFractionDigits: 0, 
+                              minimumFractionDigits: 0,
                               maximumFractionDigits: 0,
                             })}
                           </text>
