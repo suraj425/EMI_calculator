@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardDescription } from "@/components/ui/card";
 import { useState } from "react";
 import { TrendingUp } from "lucide-react";
-import { PieChart, Pie } from "recharts";
+import { PieChart, Pie, Cell } from "recharts";
 import {
   ChartContainer,
   ChartTooltip,
@@ -38,11 +38,11 @@ type FormValues = z.infer<typeof formSchema>;
 const chartConfig = {
   principal: {
     label: "Principal Amount",
-    color: "hsl(var(--chart-1))",
+    color: "hsl(var(--chart-3))", // Updated from --chart-1
   },
   interest: {
     label: "Total Interest",
-    color: "hsl(var(--chart-2))",
+    color: "hsl(var(--chart-4))",  // Updated from --chart-2
   },
 } satisfies ChartConfig;
 
@@ -79,7 +79,7 @@ export function EmiCalculatorForm() {
       let totalPaymentNum: number;
       let totalInterestNum: number;
 
-      if (monthlyRate === 0 && annualRate === 0) { // Special case for 0% interest
+      if (monthlyRate === 0 && annualRate === 0) { 
         emiValueNum = principal / tenureMonths;
         totalInterestNum = 0;
         totalPaymentNum = principal;
@@ -89,7 +89,7 @@ export function EmiCalculatorForm() {
           (Math.pow(1 + monthlyRate, tenureMonths) - 1);
         totalPaymentNum = emiValueNum * tenureMonths;
         totalInterestNum = totalPaymentNum - principal;
-      } else { // Handles invalid rate if it somehow gets here, though schema should prevent
+      } else { 
         setEmi(null);
         setTotalInterest(null);
         setTotalPayment(null);
@@ -111,7 +111,7 @@ export function EmiCalculatorForm() {
         { name: 'interest', value: totalInterestNum }
       ]);
 
-    } else { // Handles cases like 0 principal or 0 term
+    } else { 
       setEmi(null);
       setTotalInterest(null);
       setTotalPayment(null);
@@ -127,7 +127,6 @@ export function EmiCalculatorForm() {
       const values = form.getValues();
       performCalculation(values.loanAmount, values.interestRate, values.loanTerm);
     } else {
-      // Clear results if form is invalid after button click
       setEmi(null);
       setTotalInterest(null);
       setTotalPayment(null);
@@ -201,7 +200,6 @@ export function EmiCalculatorForm() {
           </CardContent>
           {emi !== null && chartData && (
             <CardFooter className="flex flex-col md:flex-row md:items-start gap-x-6 gap-y-4 bg-muted/50 p-6 rounded-b-lg">
-              {/* Left Column: Textual Details */}
               <div className="flex-1 space-y-4 w-full">
                 <div className="w-full">
                   <p className="text-lg font-medium text-foreground">Monthly EMI:</p>
@@ -225,7 +223,6 @@ export function EmiCalculatorForm() {
                 </div>
               </div>
 
-              {/* Right Column: Pie Chart */}
               <div className="w-full md:w-[280px] shrink-0">
                 <h3 className="text-lg font-semibold text-center mb-2 text-foreground">
                   Loan Breakdown
@@ -280,8 +277,7 @@ export function EmiCalculatorForm() {
                           </text>
                         );
                       }}
-                    >
-                    </Pie>
+                    />
                     <ChartLegend content={<ChartLegendContent nameKey="name" />} />
                   </PieChart>
                 </ChartContainer>
