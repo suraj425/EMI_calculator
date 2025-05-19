@@ -1,4 +1,4 @@
-import { Calculator } from 'lucide-react';
+import { Calculator, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 
 export function Header() {
@@ -9,7 +9,17 @@ export function Header() {
           <Calculator className="h-8 w-8" />
           <h1 className="text-xl md:text-2xl font-bold">EMI Calculator</h1>
         </Link>
-        {/* Navigation items can be added here if needed */}
+        <nav>
+          <ul className="flex items-center gap-4">
+            <li>
+              <Link href="/community" className="flex items-center gap-1 text-sm font-medium transition-opacity hover:opacity-80">
+                <MessageSquare className="h-5 w-5" />
+                Community
+              </Link>
+            </li>
+            {/* Additional navigation items can be added here if needed */}
+          </ul>
+        </nav>
       </div>
     </header>
   );
