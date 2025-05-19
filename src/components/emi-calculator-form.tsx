@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardDescription } from "@/components/ui/card";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { TrendingUp } from "lucide-react";
 import { PieChart, Pie, Cell } from "recharts";
 import {
@@ -42,7 +42,7 @@ const chartConfig = {
   },
   interest: {
     label: "Total Interest",
-    color: "hsl(var(--secondary))", // Use theme's secondary color (Lighter Primary Blue)
+    color: "hsl(30, 70%, 45%)", // Pastel Dark Orange
   },
 } satisfies ChartConfig;
 
@@ -300,3 +300,4 @@ export function EmiCalculatorForm() {
     </Card>
   );
 }
+
