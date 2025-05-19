@@ -1,6 +1,7 @@
+
 "use client";
 
-import type { Question } from "@/types";
+import type { Question, Answer } from "@/types";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,7 +17,11 @@ const initialQuestionsData: Question[] = [
     details: 'I am looking for a home loan with a good interest rate and minimal processing fees. Any recommendations for someone salaried in a metro city? My annual income is 12 LPA and I have a good credit score.', 
     author: 'Amit S.', 
     date: 'July 20, 2024',
-    tags: ['home loan', 'salaried', 'interest rates']
+    tags: ['home loan', 'salaried', 'interest rates'],
+    answers: [
+      { id: 'a1-1', questionId: '1', details: 'Consider checking out SBI MaxGain. It usually has competitive rates for salaried individuals.', author: 'Deepa L.', date: 'July 21, 2024', likes: 5 },
+      { id: 'a1-2', questionId: '1', details: 'HDFC also has good options, especially if you have an existing relationship with them.', author: 'Rajiv B.', date: 'July 22, 2024', likes: 2 },
+    ]
   },
   { 
     id: '2', 
@@ -24,7 +29,8 @@ const initialQuestionsData: Question[] = [
     details: 'My credit score is around 650. What are some quick ways to improve it before applying for a personal loan for a medical emergency? I need the loan within a month.', 
     author: 'Priya K.', 
     date: 'July 18, 2024',
-    tags: ['credit score', 'personal loan', 'tips'] 
+    tags: ['credit score', 'personal loan', 'tips'],
+    answers: []
   },
   { 
     id: '3', 
@@ -32,7 +38,10 @@ const initialQuestionsData: Question[] = [
     details: 'Can someone explain the pros and cons of fixed vs floating interest rates in the context of a 5-year car loan? Which one is generally better given the current market conditions?', 
     author: 'Rajesh V.', 
     date: 'July 15, 2024',
-    tags: ['car loan', 'interest rates', 'fixed vs floating'] 
+    tags: ['car loan', 'interest rates', 'fixed vs floating'],
+    answers: [
+       { id: 'a3-1', questionId: '3', details: 'Fixed rates offer predictability, which is good for budgeting. Floating rates can be lower initially but might increase.', author: 'ConsultantGPT', date: 'July 16, 2024', likes: 10 },
+    ]
   },
 ];
 
@@ -41,25 +50,63 @@ export default function CommunityPage() {
   const [showAskForm, setShowAskForm] = useState(false);
   const { toast } = useToast();
 
-  // Load initial questions on mount (client-side)
   useEffect(() => {
     setQuestions(initialQuestionsData);
   }, []);
 
-  const handleAskQuestion = (newQuestionData: Omit<Question, 'id' | 'author' | 'date'>) => {
+  const handleAskQuestion = (newQuestionData: Omit<Question, 'id' | 'author' | 'date' | 'answers'>) => {
     const newQuestion: Question = {
       ...newQuestionData,
-      id: (questions.length + 1).toString(), // Simple ID generation for mock
-      author: "Anonymous User", // Or integrate with user system later
+      id: `q-${Date.now()}`, // More unique ID
+      author: "Anonymous User", 
       date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      answers: [],
     };
     setQuestions(prevQuestions => [newQuestion, ...prevQuestions]);
     setShowAskForm(false);
     toast({
       title: "Question Posted!",
       description: "Your question has been added to the forum.",
-      variant: "default",
     });
+  };
+
+  const handlePostAnswer = (questionId: string, answerDetails: string) => {
+    setQuestions(prevQuestions =>
+      prevQuestions.map(q => {
+        if (q.id === questionId) {
+          const newAnswer: Answer = {
+            id: `ans-${Date.now()}`,
+            questionId: q.id,
+            details: answerDetails,
+            author: "Community Member", // Mock author
+            date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+            likes: 0,
+          };
+          return { ...q, answers: [...(q.answers || []), newAnswer] };
+        }
+        return q;
+      })
+    );
+    toast({
+      title: "Answer Posted!",
+      description: "Your answer has been added to the question.",
+    });
+  };
+
+  const handleLikeAnswer = (questionId: string, answerId: string) => {
+    setQuestions(prevQuestions =>
+      prevQuestions.map(q => {
+        if (q.id === questionId) {
+          return {
+            ...q,
+            answers: (q.answers || []).map(ans =>
+              ans.id === answerId ? { ...ans, likes: ans.likes + 1 } : ans
+            ),
+          };
+        }
+        return q;
+      })
+    );
   };
 
   return (
@@ -67,10 +114,10 @@ export default function CommunityPage() {
       <header className="mb-8">
         <h1 className="text-3xl font-bold text-primary flex items-center gap-2">
           <HelpCircle className="h-8 w-8" />
-          Community Forum
+          Loan Community Forum
         </h1>
         <p className="text-muted-foreground mt-2">
-          Ask questions, share knowledge, and get guidance on loans from the community.
+          Ask questions, share knowledge, get guidance on loans, and help others in the community.
         </p>
       </header>
 
@@ -85,7 +132,7 @@ export default function CommunityPage() {
         <Card className="mb-8 shadow-lg">
           <CardHeader>
             <CardTitle>Ask Your Question</CardTitle>
-            <CardDescription>Fill in the details below to post your question to the community.</CardDescription>
+            <CardDescription>Fill in the details below to post your question to the forum.</CardDescription>
           </CardHeader>
           <CardContent>
             <AskQuestionForm onSubmitQuestion={handleAskQuestion} />
@@ -100,7 +147,12 @@ export default function CommunityPage() {
         {questions.length > 0 ? (
           <div className="space-y-6">
             {questions.map(question => (
-              <QuestionListItem key={question.id} question={question} />
+              <QuestionListItem 
+                key={question.id} 
+                question={question}
+                onPostAnswer={handlePostAnswer}
+                onLikeAnswer={handleLikeAnswer}
+              />
             ))}
           </div>
         ) : (
