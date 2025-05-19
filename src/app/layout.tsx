@@ -19,21 +19,24 @@ const geistMono = Geist_Mono({
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://placehold.co'; // Replace with your actual domain in Vercel/Netlify env vars
 
 export const metadata: Metadata = {
-  title: 'EMI Calculator - Calculate Loan EMIs & Compare Bank Rates',
+  title: {
+    default: 'EMI Calculator - Calculate Loan EMIs & Compare Bank Rates',
+    template: '%s | EMI Calculator India',
+  },
   description: 'Easily calculate your Equated Monthly Installment (EMI) for home loans, car loans, personal loans. Compare current interest rates from top Indian banks and apply online. Free, fast, and accurate EMI calculator.',
-  keywords: ['EMI calculator', 'loan calculator', 'personal loan EMI', 'home loan EMI', 'car loan EMI', 'interest rates', 'bank loans', 'loan comparison', 'India', 'finance', 'mortgage calculator', 'online EMI calculator'],
+  keywords: ['EMI calculator', 'loan calculator', 'personal loan EMI', 'home loan EMI', 'car loan EMI', 'interest rates', 'bank loans', 'loan comparison', 'India', 'finance', 'mortgage calculator', 'online EMI calculator', 'financial planning'],
   openGraph: {
     title: 'EMI Calculator - Calculate Loan EMIs & Compare Bank Rates',
     description: 'Easily calculate your Equated Monthly Installment (EMI) for home loans, car loans, personal loans. Compare current interest rates from top Indian banks and apply online.',
     url: siteUrl,
-    siteName: 'EMI Calculator',
+    siteName: 'EMI Calculator India',
     images: [
       {
-        url: 'https://placehold.co/1200x630.png?text=EMI+Calculator', // Replace with a relevant image
+        url: 'https://placehold.co/1200x630.png?text=EMI+Calculator', 
         width: 1200,
         height: 630,
         alt: 'EMI Calculator - Loan Planning Tool',
-        'data-ai-hint': 'social media finance',
+        'data-ai-hint': 'loan calculator', // Updated hint
       },
     ],
     locale: 'en_IN',
@@ -43,9 +46,9 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'EMI Calculator - Calculate Loan EMIs & Compare Bank Rates',
     description: 'Easily calculate your Equated Monthly Installment (EMI) for home loans, car loans, personal loans. Compare current interest rates from top Indian banks and apply online.',
-    // images: ['https://placehold.co/1200x630.png?text=EMI+Calculator'], // Replace with a relevant image,
+    // images: ['https://placehold.co/1200x630.png?text=EMI+Calculator'], // Twitter will use Open Graph images if not specified
   },
-  robots: { // Optional: good for SEO
+  robots: { 
     index: true,
     follow: true,
     googleBot: {
@@ -56,11 +59,11 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  // icons: { // Optional: Add favicon details
+  // icons: { 
   //   icon: '/favicon.ico',
   //   apple: '/apple-touch-icon.png',
   // },
-  // verification: { // Optional: For Google Search Console, etc.
+  // verification: { 
   //   google: 'your-google-site-verification-code',
   // },
 };

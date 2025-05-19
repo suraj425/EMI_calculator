@@ -9,6 +9,23 @@ import { AskQuestionForm } from "@/components/community/ask-question-form";
 import { QuestionListItem } from "@/components/community/question-list-item";
 import { HelpCircle, MessageSquarePlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import type { Metadata } from 'next';
+
+// Note: Metadata export for client components.
+// For full SEO benefits, this should ideally be handled by a parent Server Component
+// or by using the 'generateMetadata' function if parameters from the page were needed.
+// For this example, we'll set static metadata.
+// export const metadata: Metadata = {
+//   title: 'Loan Community Forum - Ask Questions, Get Loan Advice',
+//   description: 'Join the Loan Community Forum to ask questions about personal loans, home loans, credit scores, and more. Share your knowledge and get guidance from fellow users and experts.',
+//   keywords: ['loan forum', 'finance community', 'ask loan questions', 'loan advice', 'credit score help', 'personal loan discussion', 'home loan forum'],
+//   openGraph: {
+//     title: 'Loan Community Forum - Ask Questions, Get Loan Advice',
+//     description: 'Join the Loan Community Forum to ask questions about personal loans, home loans, credit scores, and more. Share your knowledge and get guidance from fellow users and experts.',
+//     url: '/community',
+//   },
+// };
+
 
 const initialQuestionsData: Question[] = [
   { 
@@ -51,13 +68,20 @@ export default function CommunityPage() {
   const { toast } = useToast();
 
   useEffect(() => {
+    // For client components, document title can be set this way for UX.
+    // Full SEO metadata should ideally be handled via Next.js App Router's metadata API in server components.
+    document.title = 'Loan Community Forum - Ask Questions, Get Loan Advice | EMI Calculator India';
+    const descMeta = document.querySelector('meta[name="description"]');
+    if (descMeta) {
+      descMeta.setAttribute('content', 'Join the Loan Community Forum to ask questions about personal loans, home loans, credit scores, and more. Share your knowledge and get guidance from fellow users and experts.');
+    }
     setQuestions(initialQuestionsData);
   }, []);
 
   const handleAskQuestion = (newQuestionData: Omit<Question, 'id' | 'author' | 'date' | 'answers'>) => {
     const newQuestion: Question = {
       ...newQuestionData,
-      id: `q-${Date.now()}`, // More unique ID
+      id: `q-${Date.now()}`, 
       author: "Anonymous User", 
       date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
       answers: [],
@@ -78,7 +102,7 @@ export default function CommunityPage() {
             id: `ans-${Date.now()}`,
             questionId: q.id,
             details: answerDetails,
-            author: "Community Member", // Mock author
+            author: "Community Member", 
             date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
             likes: 0,
           };

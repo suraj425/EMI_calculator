@@ -17,8 +17,8 @@ export function QuestionListItem({ question, onPostAnswer, onLikeAnswer }: Quest
   return (
     <Card className="shadow-md hover:shadow-lg transition-shadow duration-200">
       <CardHeader>
-        <CardTitle className="text-xl text-primary hover:underline cursor-pointer">
-          {question.title}
+        <CardTitle asChild className="text-xl text-primary hover:underline cursor-pointer">
+          <h3>{question.title}</h3>
         </CardTitle>
         <CardDescription className="text-sm text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 pt-1">
           <span className="flex items-center gap-1">

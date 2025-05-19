@@ -14,7 +14,24 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from 'next/image';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { FileText, Banknote, Home, Car, GraduationCap, Briefcase, Gem, Landmark as BuildingIcon, Bike } from "lucide-react"; 
+
+// Note: Metadata export for client components needs to be handled differently or moved to a server component parent if dynamic.
+// For this example, we'll define static metadata. If it needed to be dynamic based on selected loan,
+// it would require a more complex setup (e.g. using generateMetadata in a parent server component).
+
+// export const metadata: Metadata = {
+//   title: 'Apply for Loans - Compare Personal, Home, Car Loans in India',
+//   description: 'Explore and apply for various loan types including personal, home, car, education, business, and gold loans from leading financial institutions in India. Compare offers and find the best rates.',
+//   keywords: ['apply for loan', 'personal loan India', 'home loan India', 'car loan India', 'education loan', 'business loan', 'gold loan', 'loan offers', 'compare loans'],
+//   openGraph: {
+//     title: 'Apply for Loans - Compare Personal, Home, Car Loans in India',
+//     description: 'Explore and apply for various loan types including personal, home, car, education, business, and gold loans from leading financial institutions in India.',
+//     url: '/apply-loan',
+//   },
+// };
+
 
 interface BankProvider {
   id: string;
@@ -183,9 +200,35 @@ const loanTypesData: LoanType[] = [
 
 export default function ApplyLoanPage() {
   const [selectedLoanTypeId, setSelectedLoanTypeId] = useState<string | null>(loanTypesData[0]?.id || null);
+  const [pageTitle, setPageTitle] = useState(loanTypesData[0]?.name ? `Apply for ${loanTypesData[0].name} - Options & Rates` : "Apply for Loans");
+  const [pageDescription, setPageDescription] = useState(loanTypesData[0]?.shortDescription || "Explore various loan options.");
+
+
+  const handleLoanTypeSelect = (loanId: string) => {
+    setSelectedLoanTypeId(loanId);
+    const selected = loanTypesData.find(loan => loan.id === loanId);
+    if (selected) {
+      setPageTitle(`Apply for ${selected.name} - Options & Rates | EMI Calculator India`);
+      setPageDescription(`Find the best ${selected.name} offers. ${selected.shortDescription} Compare rates and apply online.`);
+    }
+  };
+  
+  // Effect to update document title - for client components, direct manipulation or a library is needed for full SEO.
+  // Next.js App router metadata API is primarily for server components.
+  // This useEffect is a simple way to update title for UX, not full SEO replacement for metadata API.
+  useState(() => {
+    if (typeof window !== 'undefined') {
+      document.title = pageTitle;
+      const descMeta = document.querySelector('meta[name="description"]');
+      if (descMeta) {
+        descMeta.setAttribute('content', pageDescription);
+      }
+    }
+  }, [pageTitle, pageDescription]);
+
 
   const selectedLoan = loanTypesData.find(loan => loan.id === selectedLoanTypeId);
-  const PageSpecificIcon = selectedLoan?.pageIcon || FileText; // Fallback icon
+  const PageSpecificIcon = selectedLoan?.pageIcon || FileText; 
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -205,7 +248,7 @@ export default function ApplyLoanPage() {
             <Button
               key={loan.id}
               variant={selectedLoanTypeId === loan.id ? "default" : "outline"}
-              onClick={() => setSelectedLoanTypeId(loan.id)}
+              onClick={() => handleLoanTypeSelect(loan.id)}
               className={`p-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-200 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-primary group
                 ${selectedLoanTypeId === loan.id ? 'ring-2 ring-primary border-primary bg-primary/10' : 'border-border'}`}
               style={{ minWidth: '150px', minHeight: '60px' }}
@@ -281,5 +324,3 @@ export default function ApplyLoanPage() {
     </div>
   );
 }
-
-    
