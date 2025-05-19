@@ -14,10 +14,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardDescription } from "@/components/ui/card";
 import { useState } from "react";
 import { TrendingUp } from "lucide-react";
-import { PieChart, Pie, Cell } from "recharts"; // Cell might not be needed if we remove explicit mapping
+import { PieChart, Pie } from "recharts";
 import {
   ChartContainer,
   ChartTooltip,
@@ -50,7 +50,7 @@ export function EmiCalculatorForm() {
   const [emi, setEmi] = useState<string | null>(null);
   const [totalInterest, setTotalInterest] = useState<string | null>(null);
   const [totalPayment, setTotalPayment] = useState<string | null>(null);
-  const [chartData, setChartData] = useState<{ name: string; value: number; }[] | null>(null); // Removed 'fill' from type
+  const [chartData, setChartData] = useState<{ name: string; value: number; }[] | null>(null);
   const [principalAmountForChart, setPrincipalAmountForChart] = useState<number>(0);
   const [totalInterestForChart, setTotalInterestForChart] = useState<number>(0);
 
@@ -79,7 +79,7 @@ export function EmiCalculatorForm() {
       let totalPaymentNum: number;
       let totalInterestNum: number;
 
-      if (monthlyRate === 0 && annualRate === 0) {
+      if (monthlyRate === 0 && annualRate === 0) { // Special case for 0% interest
         emiValueNum = principal / tenureMonths;
         totalInterestNum = 0;
         totalPaymentNum = principal;
@@ -89,7 +89,7 @@ export function EmiCalculatorForm() {
           (Math.pow(1 + monthlyRate, tenureMonths) - 1);
         totalPaymentNum = emiValueNum * tenureMonths;
         totalInterestNum = totalPaymentNum - principal;
-      } else {
+      } else { // Handles invalid rate if it somehow gets here, though schema should prevent
         setEmi(null);
         setTotalInterest(null);
         setTotalPayment(null);
@@ -107,11 +107,11 @@ export function EmiCalculatorForm() {
       setTotalInterestForChart(totalInterestNum);
       
       setChartData([
-        { name: 'principal', value: principal }, // Removed 'fill'
-        { name: 'interest', value: totalInterestNum } // Removed 'fill'
+        { name: 'principal', value: principal },
+        { name: 'interest', value: totalInterestNum }
       ]);
 
-    } else {
+    } else { // Handles cases like 0 principal or 0 term
       setEmi(null);
       setTotalInterest(null);
       setTotalPayment(null);
@@ -127,6 +127,7 @@ export function EmiCalculatorForm() {
       const values = form.getValues();
       performCalculation(values.loanAmount, values.interestRate, values.loanTerm);
     } else {
+      // Clear results if form is invalid after button click
       setEmi(null);
       setTotalInterest(null);
       setTotalPayment(null);
@@ -140,10 +141,10 @@ export function EmiCalculatorForm() {
   return (
     <Card className="w-full max-w-2xl mx-auto shadow-xl">
       <CardHeader>
-        <CardTitle className="text-2xl font-semibold text-primary flex items-center gap-2">
+        <h2 id="emi-calculator-title" className="text-2xl font-semibold leading-none tracking-tight text-primary flex items-center gap-2">
           <TrendingUp className="h-6 w-6" />
           EMI Calculator
-        </CardTitle>
+        </h2>
         <CardDescription>
           Estimate your monthly loan payments quickly and easily. Enter your details and click "Calculate EMI".
         </CardDescription>
@@ -247,7 +248,7 @@ export function EmiCalculatorForm() {
                     <Pie
                       data={chartData}
                       dataKey="value"
-                      nameKey="name" // This should allow ChartContainer to apply themed colors
+                      nameKey="name" 
                       cx="50%"
                       cy="50%"
                       outerRadius={"70%"}
@@ -280,7 +281,6 @@ export function EmiCalculatorForm() {
                         );
                       }}
                     >
-                      {/* Removed explicit <Cell> mapping. ChartContainer should handle colors. */}
                     </Pie>
                     <ChartLegend content={<ChartLegendContent nameKey="name" />} />
                   </PieChart>

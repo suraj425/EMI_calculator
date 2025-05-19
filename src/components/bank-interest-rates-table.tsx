@@ -1,3 +1,4 @@
+
 import {
   Table,
   TableBody,
@@ -6,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Landmark } from "lucide-react";
 
@@ -108,10 +109,10 @@ export function BankInterestRatesTable() {
   return (
     <Card className="shadow-xl">
       <CardHeader>
-        <CardTitle className="text-2xl font-semibold text-primary flex items-center gap-2">
+        <h2 id="bank-rates-title" className="text-2xl font-semibold leading-none tracking-tight text-primary flex items-center gap-2">
           <Landmark className="h-6 w-6" />
           Compare Interest Rates
-        </CardTitle>
+        </h2>
         <CardDescription>
           Find loan offers from leading Indian banks and finance companies. Rates are indicative.
         </CardDescription>
