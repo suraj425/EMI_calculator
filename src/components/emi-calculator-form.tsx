@@ -38,11 +38,14 @@ type FormValues = z.infer<typeof formSchema>;
 const chartConfig = {
   principal: {
     label: "Principal Amount",
-    color: "hsl(var(--chart-3))", // Updated from --chart-1
+    color: "hsl(var(--chart-1))", // Green (from globals.css --chart-1)
   },
   interest: {
     label: "Total Interest",
-    color: "hsl(var(--chart-4))",  // Updated from --chart-2
+    theme: { // Specific yellow for light and dark themes
+      light: "hsl(55, 100%, 75%)", // Pastel Yellow for light theme
+      dark: "hsl(55, 100%, 65%)",  // Brighter Yellow for dark theme
+    }
   },
 } satisfies ChartConfig;
 
@@ -296,3 +299,4 @@ export function EmiCalculatorForm() {
     </Card>
   );
 }
+
