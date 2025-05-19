@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Ensure useEffect is imported
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -14,13 +14,11 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from 'next/image';
 import Link from 'next/link';
-import type { Metadata } from 'next';
+// import type { Metadata } from 'next'; // Metadata export not directly used in client components for initial render
 import { FileText, Banknote, Home, Car, GraduationCap, Briefcase, Gem, Landmark as BuildingIcon, Bike } from "lucide-react"; 
 
-// Note: Metadata export for client components needs to be handled differently or moved to a server component parent if dynamic.
-// For this example, we'll define static metadata. If it needed to be dynamic based on selected loan,
-// it would require a more complex setup (e.g. using generateMetadata in a parent server component).
-
+// Static metadata can be defined here for reference or for parent server components,
+// but for dynamic updates in client components, useEffect is used.
 // export const metadata: Metadata = {
 //   title: 'Apply for Loans - Compare Personal, Home, Car Loans in India',
 //   description: 'Explore and apply for various loan types including personal, home, car, education, business, and gold loans from leading financial institutions in India. Compare offers and find the best rates.',
@@ -200,8 +198,8 @@ const loanTypesData: LoanType[] = [
 
 export default function ApplyLoanPage() {
   const [selectedLoanTypeId, setSelectedLoanTypeId] = useState<string | null>(loanTypesData[0]?.id || null);
-  const [pageTitle, setPageTitle] = useState(loanTypesData[0]?.name ? `Apply for ${loanTypesData[0].name} - Options & Rates` : "Apply for Loans");
-  const [pageDescription, setPageDescription] = useState(loanTypesData[0]?.shortDescription || "Explore various loan options.");
+  const [pageTitle, setPageTitle] = useState(loanTypesData[0]?.name ? `Apply for ${loanTypesData[0].name} - Options & Rates | EMI Calculator India` : "Apply for Loans | EMI Calculator India");
+  const [pageDescription, setPageDescription] = useState(loanTypesData[0]?.shortDescription ? `Find the best ${loanTypesData[0].name} offers. ${loanTypesData[0].shortDescription} Compare rates and apply online.` : "Explore various loan options and apply online.");
 
 
   const handleLoanTypeSelect = (loanId: string) => {
@@ -213,10 +211,7 @@ export default function ApplyLoanPage() {
     }
   };
   
-  // Effect to update document title - for client components, direct manipulation or a library is needed for full SEO.
-  // Next.js App router metadata API is primarily for server components.
-  // This useEffect is a simple way to update title for UX, not full SEO replacement for metadata API.
-  useState(() => {
+  useEffect(() => {
     if (typeof window !== 'undefined') {
       document.title = pageTitle;
       const descMeta = document.querySelector('meta[name="description"]');
@@ -324,3 +319,5 @@ export default function ApplyLoanPage() {
     </div>
   );
 }
+
+    
