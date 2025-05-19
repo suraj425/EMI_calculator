@@ -1,4 +1,4 @@
-import { Calculator, MessageSquare } from 'lucide-react';
+import { Calculator, MessageSquare, FileText } from 'lucide-react';
 import Link from 'next/link';
 
 export function Header() {
@@ -10,7 +10,13 @@ export function Header() {
           <h1 className="text-xl md:text-2xl font-bold">EMI Calculator</h1>
         </Link>
         <nav>
-          <ul className="flex items-center gap-4">
+          <ul className="flex items-center gap-4 md:gap-6">
+            <li>
+              <Link href="/apply-loan" className="flex items-center gap-1 text-sm font-medium transition-opacity hover:opacity-80">
+                <FileText className="h-5 w-5" />
+                Apply Loan
+              </Link>
+            </li>
             <li>
               <Link href="/community" className="flex items-center gap-1 text-sm font-medium transition-opacity hover:opacity-80">
                 <MessageSquare className="h-5 w-5" />
