@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardDescription } from "@/components/ui/card";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TrendingUp } from "lucide-react";
 import { PieChart, Pie, Cell } from "recharts";
 import {
@@ -280,7 +280,11 @@ export function EmiCalculatorForm() {
                           </text>
                         );
                       }}
-                    />
+                    >
+                       {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={`var(--color-${entry.name})`} />
+                      ))}
+                    </Pie>
                     <ChartLegend content={<ChartLegendContent nameKey="name" />} />
                   </PieChart>
                 </ChartContainer>
@@ -299,4 +303,3 @@ export function EmiCalculatorForm() {
     </Card>
   );
 }
-
