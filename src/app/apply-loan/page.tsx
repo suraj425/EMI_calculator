@@ -14,7 +14,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from 'next/image';
 import Link from 'next/link';
-import { FileText, Banknote, Home, Car, GraduationCap, Briefcase, Gem, Landmark as BuildingIcon, Bike } from "lucide-react"; // Added more specific icons
+import { FileText, Banknote, Home, Car, GraduationCap, Briefcase, Gem, Landmark as BuildingIcon, Bike } from "lucide-react"; 
 
 interface BankProvider {
   id: string;
@@ -23,15 +23,14 @@ interface BankProvider {
   dataAiHint: string;
   applyLink: string;
   isBank: boolean;
-  interestRate: string; // Added interest rate
+  interestRate: string; 
 }
 
 interface LoanType {
   id: string;
   name: string;
   shortDescription: string;
-  // Icon properties removed
-  pageIcon: React.ElementType; // For the header of the selected loan card
+  pageIcon: React.ElementType; 
   providers: BankProvider[];
 }
 
@@ -209,10 +208,11 @@ export default function ApplyLoanPage() {
               onClick={() => setSelectedLoanTypeId(loan.id)}
               className={`p-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-200 ease-in-out transform hover:scale-105 focus:ring-2 focus:ring-primary group
                 ${selectedLoanTypeId === loan.id ? 'ring-2 ring-primary border-primary bg-primary/10' : 'border-border'}`}
-              style={{ minWidth: '150px', minHeight: '60px' }} // Adjusted minWidth for names
+              style={{ minWidth: '150px', minHeight: '60px' }}
             >
-              {/* Image removed from here */}
-              <span className="text-sm font-medium text-center">{loan.name}</span>
+              <span className={`text-sm font-medium text-center ${selectedLoanTypeId === loan.id ? 'text-primary' : 'text-foreground'}`}>
+                {loan.name}
+              </span>
             </Button>
           ))}
         </div>
@@ -222,7 +222,7 @@ export default function ApplyLoanPage() {
         <Card className="shadow-xl w-full max-w-4xl mx-auto">
           <CardHeader className="pb-4">
             <div className="flex items-center gap-3 mb-2">
-                <PageSpecificIcon className="h-8 w-8 text-primary" /> {/* Using pageIcon here */}
+                <PageSpecificIcon className="h-8 w-8 text-primary" /> 
                 <CardTitle className="text-2xl md:text-3xl text-primary">{selectedLoan.name}</CardTitle>
             </div>
             <CardDescription className="text-md text-muted-foreground">
@@ -238,7 +238,7 @@ export default function ApplyLoanPage() {
                     <TableRow>
                       <TableHead className="w-[80px] hidden sm:table-cell">Logo</TableHead>
                       <TableHead>Institution Name</TableHead>
-                      <TableHead className="text-center">Interest Rate (p.a.)</TableHead> {/* New column */}
+                      <TableHead className="text-center">Interest Rate (p.a.)</TableHead> 
                       <TableHead className="text-right">Action</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -256,7 +256,7 @@ export default function ApplyLoanPage() {
                           />
                         </TableCell>
                         <TableCell className="font-medium py-3">{provider.name}</TableCell>
-                        <TableCell className="text-center font-semibold text-primary py-3">{provider.interestRate}</TableCell> {/* Display interest rate */}
+                        <TableCell className="text-center font-semibold text-primary py-3">{provider.interestRate}</TableCell> 
                         <TableCell className="text-right py-3">
                           <Button asChild size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground shadow transition-transform hover:scale-105">
                             <Link href={provider.applyLink} target="_blank" rel="noopener noreferrer">
