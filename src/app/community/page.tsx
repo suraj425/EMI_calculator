@@ -2,19 +2,17 @@
 "use client";
 
 import type { Question, Answer } from "@/types";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AskQuestionForm } from "@/components/community/ask-question-form";
 import { QuestionListItem } from "@/components/community/question-list-item";
-import { HelpCircle, MessageSquarePlus } from "lucide-react";
+import { HelpCircle, MessageSquarePlus, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import type { Metadata } from 'next';
+import { supabase } from "@/lib/supabaseClient"; // Import Supabase client
 
-// Note: Metadata export for client components.
-// For full SEO benefits, this should ideally be handled by a parent Server Component
-// or by using the 'generateMetadata' function if parameters from the page were needed.
-// For this example, we'll set static metadata.
+// For client components, document title can be set this way for UX.
+// Full SEO metadata should ideally be handled via Next.js App Router's metadata API in server components.
 // export const metadata: Metadata = {
 //   title: 'Loan Community Forum - Ask Questions, Get Loan Advice',
 //   description: 'Join the Loan Community Forum to ask questions about personal loans, home loans, credit scores, and more. Share your knowledge and get guidance from fellow users and experts.',
@@ -27,110 +25,176 @@ import type { Metadata } from 'next';
 // };
 
 
-const initialQuestionsData: Question[] = [
-  { 
-    id: '1', 
-    title: 'Best home loan for salaried employees in 2024?', 
-    details: 'I am looking for a home loan with a good interest rate and minimal processing fees. Any recommendations for someone salaried in a metro city? My annual income is 12 LPA and I have a good credit score.', 
-    author: 'Amit S.', 
-    date: 'July 20, 2024',
-    tags: ['home loan', 'salaried', 'interest rates'],
-    answers: [
-      { id: 'a1-1', questionId: '1', details: 'Consider checking out SBI MaxGain. It usually has competitive rates for salaried individuals.', author: 'Deepa L.', date: 'July 21, 2024', likes: 5 },
-      { id: 'a1-2', questionId: '1', details: 'HDFC also has good options, especially if you have an existing relationship with them.', author: 'Rajiv B.', date: 'July 22, 2024', likes: 2 },
-    ]
-  },
-  { 
-    id: '2', 
-    title: 'How to improve credit score for a personal loan?', 
-    details: 'My credit score is around 650. What are some quick ways to improve it before applying for a personal loan for a medical emergency? I need the loan within a month.', 
-    author: 'Priya K.', 
-    date: 'July 18, 2024',
-    tags: ['credit score', 'personal loan', 'tips'],
-    answers: []
-  },
-  { 
-    id: '3', 
-    title: 'Understanding fixed vs floating interest rates for car loans.', 
-    details: 'Can someone explain the pros and cons of fixed vs floating interest rates in the context of a 5-year car loan? Which one is generally better given the current market conditions?', 
-    author: 'Rajesh V.', 
-    date: 'July 15, 2024',
-    tags: ['car loan', 'interest rates', 'fixed vs floating'],
-    answers: [
-       { id: 'a3-1', questionId: '3', details: 'Fixed rates offer predictability, which is good for budgeting. Floating rates can be lower initially but might increase.', author: 'ConsultantGPT', date: 'July 16, 2024', likes: 10 },
-    ]
-  },
-];
-
 export default function CommunityPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [showAskForm, setShowAskForm] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
+  const fetchQuestions = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const { data: questionsData, error: questionsError } = await supabase
+        .from('questions')
+        .select(`
+          *,
+          answers (
+            *
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (questionsError) throw questionsError;
+      
+      setQuestions(questionsData || []);
+    } catch (err: any) {
+      console.error("Error fetching questions:", err);
+      setError("Failed to load questions. Please try again later.");
+      toast({
+        title: "Error",
+        description: "Could not fetch questions from the database.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast]);
+
   useEffect(() => {
-    // For client components, document title can be set this way for UX.
-    // Full SEO metadata should ideally be handled via Next.js App Router's metadata API in server components.
     document.title = 'Loan Community Forum - Ask Questions, Get Loan Advice | EMI Calculator India';
     const descMeta = document.querySelector('meta[name="description"]');
     if (descMeta) {
       descMeta.setAttribute('content', 'Join the Loan Community Forum to ask questions about personal loans, home loans, credit scores, and more. Share your knowledge and get guidance from fellow users and experts.');
     }
-    setQuestions(initialQuestionsData);
-  }, []);
+    fetchQuestions();
+  }, [fetchQuestions]);
 
-  const handleAskQuestion = (newQuestionData: Omit<Question, 'id' | 'author' | 'date' | 'answers'>) => {
-    const newQuestion: Question = {
-      ...newQuestionData,
-      id: `q-${Date.now()}`, 
-      author: "Anonymous User", 
-      date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-      answers: [],
-    };
-    setQuestions(prevQuestions => [newQuestion, ...prevQuestions]);
-    setShowAskForm(false);
-    toast({
-      title: "Question Posted!",
-      description: "Your question has been added to the forum.",
-    });
+  const handleAskQuestion = async (newQuestionData: Omit<Question, 'id' | 'author' | 'date' | 'answers' | 'created_at'>) => {
+    try {
+      const questionToInsert = {
+        ...newQuestionData,
+        author: "Anonymous User", // Replace with actual user if auth is added
+        date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+        tags: newQuestionData.tags || [],
+      };
+
+      const { data, error } = await supabase
+        .from('questions')
+        .insert([questionToInsert])
+        .select(`
+          *,
+          answers (
+            *
+          )
+        `)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        // Add the new question to the top of the list
+        setQuestions(prevQuestions => [data as Question, ...prevQuestions]);
+        setShowAskForm(false);
+        toast({
+          title: "Question Posted!",
+          description: "Your question has been added to the forum.",
+        });
+      }
+    } catch (err: any) {
+      console.error("Error posting question:", err);
+      toast({
+        title: "Error Posting Question",
+        description: err.message || "Could not save your question. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handlePostAnswer = (questionId: string, answerDetails: string) => {
-    setQuestions(prevQuestions =>
-      prevQuestions.map(q => {
-        if (q.id === questionId) {
-          const newAnswer: Answer = {
-            id: `ans-${Date.now()}`,
-            questionId: q.id,
-            details: answerDetails,
-            author: "Community Member", 
-            date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-            likes: 0,
-          };
-          return { ...q, answers: [...(q.answers || []), newAnswer] };
-        }
-        return q;
-      })
-    );
-    toast({
-      title: "Answer Posted!",
-      description: "Your answer has been added to the question.",
-    });
+  const handlePostAnswer = async (questionId: string, answerDetails: string) => {
+    try {
+      const answerToInsert = {
+        question_id: questionId,
+        details: answerDetails,
+        author: "Community Member", // Replace with actual user if auth is added
+        date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+        likes: 0,
+      };
+      const { data: newAnswer, error } = await supabase
+        .from('answers')
+        .insert([answerToInsert])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      if (newAnswer) {
+        setQuestions(prevQuestions =>
+          prevQuestions.map(q => {
+            if (q.id === questionId) {
+              return { ...q, answers: [...(q.answers || []), newAnswer as Answer] };
+            }
+            return q;
+          })
+        );
+        toast({
+          title: "Answer Posted!",
+          description: "Your answer has been added to the question.",
+        });
+      }
+    } catch (err: any) {
+      console.error("Error posting answer:", err);
+      toast({
+        title: "Error Posting Answer",
+        description: err.message || "Could not save your answer. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleLikeAnswer = (questionId: string, answerId: string) => {
-    setQuestions(prevQuestions =>
-      prevQuestions.map(q => {
-        if (q.id === questionId) {
-          return {
-            ...q,
-            answers: (q.answers || []).map(ans =>
-              ans.id === answerId ? { ...ans, likes: ans.likes + 1 } : ans
-            ),
-          };
-        }
-        return q;
-      })
-    );
+  const handleLikeAnswer = async (questionId: string, answerId: string) => {
+    try {
+      // First, get the current like count
+      const { data: currentAnswer, error: fetchError } = await supabase
+        .from('answers')
+        .select('likes')
+        .eq('id', answerId)
+        .single();
+
+      if (fetchError || !currentAnswer) throw fetchError || new Error("Answer not found");
+
+      const newLikes = currentAnswer.likes + 1;
+
+      const { error: updateError } = await supabase
+        .from('answers')
+        .update({ likes: newLikes })
+        .eq('id', answerId);
+
+      if (updateError) throw updateError;
+
+      setQuestions(prevQuestions =>
+        prevQuestions.map(q => {
+          if (q.id === questionId) {
+            return {
+              ...q,
+              answers: (q.answers || []).map(ans =>
+                ans.id === answerId ? { ...ans, likes: newLikes } : ans
+              ),
+            };
+          }
+          return q;
+        })
+      );
+      // Optional: Add a toast for like
+    } catch (err: any) {
+       console.error("Error liking answer:", err);
+       toast({
+        title: "Error Liking Answer",
+        description: err.message || "Could not update like. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -168,7 +232,23 @@ export default function CommunityPage() {
         <h2 id="recent-questions-title" className="text-2xl font-semibold mb-6 text-foreground">
           Recent Questions
         </h2>
-        {questions.length > 0 ? (
+        {isLoading && (
+          <div className="flex justify-center items-center py-10">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="ml-2 text-muted-foreground">Loading questions...</p>
+          </div>
+        )}
+        {error && !isLoading && (
+          <Card className="border-destructive bg-destructive/10">
+            <CardContent className="pt-6">
+              <p className="text-destructive-foreground text-center">{error}</p>
+              <div className="text-center mt-4">
+                 <Button onClick={fetchQuestions} variant="destructive">Try Again</Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+        {!isLoading && !error && questions.length > 0 ? (
           <div className="space-y-6">
             {questions.map(question => (
               <QuestionListItem 
@@ -179,8 +259,14 @@ export default function CommunityPage() {
               />
             ))}
           </div>
-        ) : (
-          <p className="text-muted-foreground">No questions yet. Be the first to ask!</p>
+        ) : null}
+        {!isLoading && !error && questions.length === 0 && (
+           <Card className="text-center py-10">
+            <CardContent>
+              <HelpCircle className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">No questions yet. Be the first to ask!</p>
+            </CardContent>
+          </Card>
         )}
       </section>
     </div>

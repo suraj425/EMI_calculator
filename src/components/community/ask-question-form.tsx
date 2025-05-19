@@ -16,7 +16,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Send } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
+import { useState } from "react";
 
 const formSchema = z.object({
   title: z.string().min(10, {
@@ -35,10 +36,11 @@ const formSchema = z.object({
 type AskQuestionFormValues = z.infer<typeof formSchema>;
 
 interface AskQuestionFormProps {
-  onSubmitQuestion: (data: Omit<Question, 'id' | 'author' | 'date'>) => void;
+  onSubmitQuestion: (data: Omit<Question, 'id' | 'author' | 'date' | 'answers' | 'created_at'>) => Promise<void>;
 }
 
 export function AskQuestionForm({ onSubmitQuestion }: AskQuestionFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<AskQuestionFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,13 +50,21 @@ export function AskQuestionForm({ onSubmitQuestion }: AskQuestionFormProps) {
     },
   });
 
-  function onSubmit(values: AskQuestionFormValues) {
-    onSubmitQuestion({
-      title: values.title,
-      details: values.details,
-      tags: values.tags,
-    });
-    form.reset(); // Reset form after submission
+  async function onSubmit(values: AskQuestionFormValues) {
+    setIsSubmitting(true);
+    try {
+      await onSubmitQuestion({
+        title: values.title,
+        details: values.details,
+        tags: values.tags as string[], // Zod transform handles this
+      });
+      form.reset(); 
+    } catch (error) {
+      // Error is handled by the parent component's toast
+      console.error("Submission error in form:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -103,9 +113,13 @@ export function AskQuestionForm({ onSubmitQuestion }: AskQuestionFormProps) {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full sm:w-auto shadow-md">
-          <Send className="mr-2 h-4 w-4" />
-          Post Question
+        <Button type="submit" className="w-full sm:w-auto shadow-md" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Send className="mr-2 h-4 w-4" />
+          )}
+          {isSubmitting ? 'Posting...' : 'Post Question'}
         </Button>
       </form>
     </Form>
