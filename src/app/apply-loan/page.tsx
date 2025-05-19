@@ -46,10 +46,10 @@ const loanTypesData: LoanType[] = [
       { id: "icici-pl", name: "ICICI Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "icici logo", applyLink: "https://www.icicibank.com/personal-banking/loans/personal-loan", isBank: true, interestRate: "10.80% - 16.00% p.a." },
       { id: "axis-pl", name: "Axis Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "axis logo", applyLink: "https://www.axisbank.com/retail/loans/personal-loan", isBank: true, interestRate: "10.99% - 17.00% p.a." },
       { id: "kotak-pl", name: "Kotak Mahindra Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "kotak logo", applyLink: "https://www.kotak.com/en/personal-banking/loans/personal-loan.html", isBank: true, interestRate: "10.99% onwards" },
-      { id: "bajaj-pl", name: "Bajaj Finserv", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "bajaj logo", applyLink: "https://www.bajajfinserv.in/personal-loan", isBank: false, interestRate: "11.00% onwards" },
-      { id: "tata-pl", name: "Tata Capital", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "tata logo", applyLink: "https://www.tatacapital.com/personal-loan.html", isBank: false, interestRate: "10.99% onwards" },
+      { id: "bajaj-pl", name: "Bajaj Finserv", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "bajaj finserv logo", applyLink: "https://www.bajajfinserv.in/personal-loan", isBank: false, interestRate: "11.00% onwards" },
+      { id: "tata-pl", name: "Tata Capital", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "tata capital logo", applyLink: "https://www.tatacapital.com/personal-loan.html", isBank: false, interestRate: "10.99% onwards" },
       { id: "moneyview-pl", name: "MoneyView", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "moneyview logo", applyLink: "https://moneyview.in/personal-loan", isBank: false, interestRate: "15.96% onwards" },
-      { id: "fullerton-pl", name: "Fullerton India", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "fullerton logo", applyLink: "https://www.fullertonindia.com/personal-loan.aspx", isBank: false, interestRate: "11.99% onwards" },
+      { id: "fullerton-pl", name: "Fullerton India", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "fullerton india logo", applyLink: "https://www.fullertonindia.com/personal-loan.aspx", isBank: false, interestRate: "11.99% onwards" },
       { id: "indusind-pl", name: "IndusInd Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "indusind logo", applyLink: "https://www.indusind.com/in/en/personal/loans/personal-loan.html", isBank: true, interestRate: "10.49% onwards" },
     ],
   },
@@ -64,10 +64,10 @@ const loanTypesData: LoanType[] = [
       { id: "icici-hl", name: "ICICI Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "icici logo", applyLink: "https://www.icicibank.com/personal-banking/loans/home-loan", isBank: true, interestRate: "8.75% onwards" },
       { id: "axis-hl", name: "Axis Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "axis logo", applyLink: "https://www.axisbank.com/retail/loans/home-loan", isBank: true, interestRate: "8.75% onwards" },
       { id: "kotak-hl", name: "Kotak Mahindra Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "kotak logo", applyLink: "https://www.kotak.com/en/personal-banking/loans/home-loan.html", isBank: true, interestRate: "8.70% onwards" },
-      { id: "bajaj-hl", name: "Bajaj Finserv", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "bajaj logo", applyLink: "https://www.bajajfinserv.in/home-loan", isBank: false, interestRate: "8.60% onwards" },
-      { id: "tata-hl", name: "Tata Capital", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "tata logo", applyLink: "https://www.tatacapital.com/home-loan.html", isBank: false, interestRate: "8.95% onwards" },
-      { id: "pnbhfl-hl", name: "PNB Housing Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "pnbhfl logo", applyLink: "https://www.pnbhousing.com/", isBank: false, interestRate: "8.75% onwards" },
-      { id: "lichfl-hl", name: "LIC Housing Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "lichfl logo", applyLink: "https://www.lichousing.com/", isBank: false, interestRate: "8.50% onwards" },
+      { id: "bajaj-hl", name: "Bajaj Finserv", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "bajaj finserv logo", applyLink: "https://www.bajajfinserv.in/home-loan", isBank: false, interestRate: "8.60% onwards" },
+      { id: "tata-hl", name: "Tata Capital", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "tata capital logo", applyLink: "https://www.tatacapital.com/home-loan.html", isBank: false, interestRate: "8.95% onwards" },
+      { id: "pnbhfl-hl", name: "PNB Housing Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "pnb housing logo", applyLink: "https://www.pnbhousing.com/", isBank: false, interestRate: "8.75% onwards" },
+      { id: "lichfl-hl", name: "LIC Housing Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "lic housing logo", applyLink: "https://www.lichousing.com/", isBank: false, interestRate: "8.50% onwards" },
       { id: "indiabulls-hl", name: "Indiabulls Housing Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "indiabulls logo", applyLink: "https://www.indiabullshomeloans.com/", isBank: false, interestRate: "8.99% onwards" },
     ],
   },
@@ -82,11 +82,11 @@ const loanTypesData: LoanType[] = [
       { id: "icici-cl", name: "ICICI Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "icici logo", applyLink: "https://www.icicibank.com/personal-banking/loans/car-loan", isBank: true, interestRate: "9.00% onwards" },
       { id: "axis-cl", name: "Axis Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "axis logo", applyLink: "https://www.axisbank.com/retail/loans/car-loan", isBank: true, interestRate: "9.30% onwards" },
       { id: "kotak-cl", name: "Kotak Mahindra Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "kotak logo", applyLink: "https://www.kotak.com/en/personal-banking/loans/car-loan.html", isBank: true, interestRate: "8.75% onwards" },
-      { id: "tata-cl", name: "Tata Capital", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "tata logo", applyLink: "https://www.tatacapital.com/car-loan.html", isBank: false, interestRate: "10.75% onwards" },
-      { id: "mahindra-cl", name: "Mahindra Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "mahindra logo", applyLink: "https://www.mahindrafinance.com/loans/vehicle-loans/car-loan", isBank: false, interestRate: "Rates vary" },
-      { id: "sundaram-cl", name: "Sundaram Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "sundaram logo", applyLink: "https://www.sundaramfinance.in/vehicle-loans/car-loans", isBank: false, interestRate: "Rates vary" },
+      { id: "tata-cl", name: "Tata Capital", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "tata capital logo", applyLink: "https://www.tatacapital.com/car-loan.html", isBank: false, interestRate: "10.75% onwards" },
+      { id: "mahindra-cl", name: "Mahindra Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "mahindra finance logo", applyLink: "https://www.mahindrafinance.com/loans/vehicle-loans/car-loan", isBank: false, interestRate: "Rates vary" },
+      { id: "sundaram-cl", name: "Sundaram Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "sundaram finance logo", applyLink: "https://www.sundaramfinance.in/vehicle-loans/car-loans", isBank: false, interestRate: "Rates vary" },
       { id: "cholamandalam-cl", name: "Cholamandalam Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "chola logo", applyLink: "https://www.cholamandalam.com/vehicle-finance/car-loans", isBank: false, interestRate: "Rates vary" },
-      { id: "bajajauto-cl", name: "Bajaj Auto Finance (Used Car)", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "bajaj logo", applyLink: "https://www.bajajautofinance.com/used-car-loan", isBank: false, interestRate: "Rates vary" },
+      { id: "bajajauto-cl", name: "Bajaj Auto Finance (Used Car)", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "bajaj auto logo", applyLink: "https://www.bajajautofinance.com/used-car-loan", isBank: false, interestRate: "Rates vary" },
     ],
   },
   {
@@ -101,7 +101,7 @@ const loanTypesData: LoanType[] = [
       { id: "axis-el", name: "Axis Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "axis logo", applyLink: "https://www.axisbank.com/retail/loans/education-loan", isBank: true, interestRate: "10.50% onwards" },
       { id: "bob-el", name: "Bank of Baroda", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "bob logo", applyLink: "https://www.bankofbaroda.in/personal-banking/loans/education-loan", isBank: true, interestRate: "8.15% - 11.15% p.a." },
       { id: "avanse-el", name: "Avanse Financial Services", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "avanse logo", applyLink: "https://www.avanse.com/", isBank: false, interestRate: "11.00% onwards" },
-      { id: "hdfccredila-el", name: "HDFC Credila", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "credila logo", applyLink: "https://www.hdfccredila.com/", isBank: false, interestRate: "11.25% onwards" },
+      { id: "hdfccredila-el", name: "HDFC Credila", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "hdfc credila logo", applyLink: "https://www.hdfccredila.com/", isBank: false, interestRate: "11.25% onwards" },
       { id: "auxilo-el", name: "Auxilo", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "auxilo logo", applyLink: "https://www.auxilo.com/", isBank: false, interestRate: "11.50% onwards" },
       { id: "incred-el", name: "InCred", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "incred logo", applyLink: "https://www.incred.com/education-loan/", isBank: false, interestRate: "11.00% onwards" },
       { id: "propelld-el", name: "Propelld", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "propelld logo", applyLink: "https://propelld.com/", isBank: false, interestRate: "12.00% onwards" },
@@ -118,11 +118,11 @@ const loanTypesData: LoanType[] = [
       { id: "icici-bl", name: "ICICI Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "icici logo", applyLink: "https://www.icicibank.com/business-banking/loans/business-loan", isBank: true, interestRate: "11.25% onwards" },
       { id: "axis-bl", name: "Axis Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "axis logo", applyLink: "https://www.axisbank.com/business-banking/loans/business-loan", isBank: true, interestRate: "11.50% onwards" },
       { id: "kotak-bl", name: "Kotak Mahindra Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "kotak logo", applyLink: "https://www.kotak.com/en/business/loans/business-loans.html", isBank: true, interestRate: "Rates vary" },
-      { id: "bajaj-bl", name: "Bajaj Finserv", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "bajaj logo", applyLink: "https://www.bajajfinserv.in/business-loan", isBank: false, interestRate: "9.75% - 30.00% p.a." },
-      { id: "tata-bl", name: "Tata Capital", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "tata logo", applyLink: "https://www.tatacapital.com/business-loan.html", isBank: false, interestRate: "12.00% onwards" },
+      { id: "bajaj-bl", name: "Bajaj Finserv", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "bajaj finserv logo", applyLink: "https://www.bajajfinserv.in/business-loan", isBank: false, interestRate: "9.75% - 30.00% p.a." },
+      { id: "tata-bl", name: "Tata Capital", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "tata capital logo", applyLink: "https://www.tatacapital.com/business-loan.html", isBank: false, interestRate: "12.00% onwards" },
       { id: "lendingkart-bl", name: "Lendingkart Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "lendingkart logo", applyLink: "https://www.lendingkart.com/", isBank: false, interestRate: "12.00% - 27.00% p.a." },
       { id: "flexiloans-bl", name: "FlexiLoans", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "flexiloans logo", applyLink: "https://flexiloans.com/", isBank: false, interestRate: "12.00% onwards" },
-      { id: "fullerton-bl", name: "Fullerton India", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "fullerton logo", applyLink: "https://www.fullertonindia.com/business-loan.aspx", isBank: false, interestRate: "12.00% onwards" },
+      { id: "fullerton-bl", name: "Fullerton India", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "fullerton india logo", applyLink: "https://www.fullertonindia.com/business-loan.aspx", isBank: false, interestRate: "12.00% onwards" },
     ],
   },
   {
@@ -135,11 +135,11 @@ const loanTypesData: LoanType[] = [
         { id: "hdfc-gl", name: "HDFC Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "hdfc logo", applyLink: "https://www.hdfcbank.com/personal/borrow/popular-loans/gold-loan", isBank: true, interestRate: "9.90% onwards" },
         { id: "icici-gl", name: "ICICI Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "icici logo", applyLink: "https://www.icicibank.com/personal-banking/loans/gold-loan", isBank: true, interestRate: "10.00% onwards" },
         { id: "axis-gl", name: "Axis Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "axis logo", applyLink: "https://www.axisbank.com/retail/loans/gold-loan", isBank: true, interestRate: "10.50% onwards" },
-        { id: "federal-gl", name: "Federal Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "federal logo", applyLink: "https://www.federalbank.co.in/gold-loans", isBank: true, interestRate: "8.99% onwards" },
-        { id: "muthoot-gl", name: "Muthoot Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "muthoot logo", applyLink: "https://www.muthootfinance.com/gold-loan", isBank: false, interestRate: "12.00% - 24.00% p.a." },
+        { id: "federal-gl", name: "Federal Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "federal bank logo", applyLink: "https://www.federalbank.co.in/gold-loans", isBank: true, interestRate: "8.99% onwards" },
+        { id: "muthoot-gl", name: "Muthoot Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "muthoot finance logo", applyLink: "https://www.muthootfinance.com/gold-loan", isBank: false, interestRate: "12.00% - 24.00% p.a." },
         { id: "manappuram-gl", name: "Manappuram Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "manappuram logo", applyLink: "https://www.manappuram.com/gold-loan.html", isBank: false, interestRate: "12.00% - 29.00% p.a." },
         { id: "iifl-gl", name: "IIFL Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "iifl logo", applyLink: "https://www.iifl.com/gold-loans", isBank: false, interestRate: "9.24% - 24.00% p.a." },
-        { id: "bajaj-gl", name: "Bajaj Finserv", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "bajaj logo", applyLink: "https://www.bajajfinserv.in/gold-loan", isBank: false, interestRate: "9.50% - 28.00% p.a." },
+        { id: "bajaj-gl", name: "Bajaj Finserv", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "bajaj finserv logo", applyLink: "https://www.bajajfinserv.in/gold-loan", isBank: false, interestRate: "9.50% - 28.00% p.a." },
         { id: "indusind-gl", name: "IndusInd Bank (Gold Loan)", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "indusind logo", applyLink: "https://www.indusind.com/in/en/personal/loans/gold-loan.html", isBank: true, interestRate: "9.00% onwards" },
     ]
   },
@@ -154,10 +154,10 @@ const loanTypesData: LoanType[] = [
         { id: "icici-lap", name: "ICICI Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "icici logo", applyLink: "https://www.icicibank.com/personal-banking/loans/loan-against-property", isBank: true, interestRate: "9.75% onwards" },
         { id: "axis-lap", name: "Axis Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "axis logo", applyLink: "https://www.axisbank.com/retail/loans/loan-against-property", isBank: true, interestRate: "10.50% onwards" },
         { id: "kotak-lap", name: "Kotak Mahindra Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "kotak logo", applyLink: "https://www.kotak.com/en/personal-banking/loans/loan-against-property.html", isBank: true, interestRate: "9.75% onwards" },
-        { id: "bajaj-lap", name: "Bajaj Finserv", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "bajaj logo", applyLink: "https://www.bajajfinserv.in/loan-against-property", isBank: false, interestRate: "9.00% - 16.00% p.a." },
-        { id: "tata-lap", name: "Tata Capital", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "tata logo", applyLink: "https://www.tatacapital.com/loan-against-property.html", isBank: false, interestRate: "10.10% onwards" },
-        { id: "fullerton-lap", name: "Fullerton India", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "fullerton logo", applyLink: "https://www.fullertonindia.com/loan-against-property.aspx", isBank: false, interestRate: "9.00% onwards" },
-        { id: "lichfl-lap", name: "LIC Housing Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "lichfl logo", applyLink: "https://www.lichousing.com/loan-against-property", isBank: false, interestRate: "9.50% onwards" },
+        { id: "bajaj-lap", name: "Bajaj Finserv", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "bajaj finserv logo", applyLink: "https://www.bajajfinserv.in/loan-against-property", isBank: false, interestRate: "9.00% - 16.00% p.a." },
+        { id: "tata-lap", name: "Tata Capital", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "tata capital logo", applyLink: "https://www.tatacapital.com/loan-against-property.html", isBank: false, interestRate: "10.10% onwards" },
+        { id: "fullerton-lap", name: "Fullerton India", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "fullerton india logo", applyLink: "https://www.fullertonindia.com/loan-against-property.aspx", isBank: false, interestRate: "9.00% onwards" },
+        { id: "lichfl-lap", name: "LIC Housing Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "lic housing logo", applyLink: "https://www.lichousing.com/loan-against-property", isBank: false, interestRate: "9.50% onwards" },
         { id: "indiabulls-lap", name: "Indiabulls Housing Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "indiabulls logo", applyLink: "https://www.indiabullshomeloans.com/loan-against-property/", isBank: false, interestRate: "10.00% onwards" },
     ]
   },
@@ -172,11 +172,11 @@ const loanTypesData: LoanType[] = [
         { id: "icici-twl", name: "ICICI Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "icici logo", applyLink: "https://www.icicibank.com/personal-banking/loans/two-wheeler-loan", isBank: true, interestRate: "10.50% onwards" },
         { id: "axis-twl", name: "Axis Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "axis logo", applyLink: "https://www.axisbank.com/retail/loans/two-wheeler-loan", isBank: true, interestRate: "11.00% onwards" },
         { id: "kotak-twl", name: "Kotak Mahindra Bank", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "kotak logo", applyLink: "https://www.kotak.com/en/personal-banking/loans/two-wheeler-loan.html", isBank: true, interestRate: "10.00% onwards" },
-        { id: "bajajauto-twl", name: "Bajaj Auto Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "bajajauto logo", applyLink: "https://www.bajajautofinance.com/two-wheeler-loan", isBank: false, interestRate: "6.99% onwards (may vary)" },
-        { id: "tvscredit-twl", name: "TVS Credit", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "tvscredit logo", applyLink: "https://www.tvscredit.com/two-wheeler-loans/", isBank: false, interestRate: "Rates vary" },
-        { id: "ltfs-twl", name: "L&T Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "ltfs logo", applyLink: "https://www.ltfs.com/companies/lt-finance/two-wheeler-loan.html", isBank: false, interestRate: "Rates vary" },
-        { id: "shriramcity-twl", name: "Shriram City Union Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "shriramcity logo", applyLink: "https://www.shriramcity.in/two-wheeler-loan", isBank: false, interestRate: "Rates vary" },
-        { id: "hero-twl", name: "Hero FinCorp", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "hero logo", applyLink: "https://www.herofincorp.com/two-wheeler-loan", isBank: false, interestRate: "Rates vary" },
+        { id: "bajajauto-twl", name: "Bajaj Auto Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "bajaj auto logo", applyLink: "https://www.bajajautofinance.com/two-wheeler-loan", isBank: false, interestRate: "6.99% onwards (may vary)" },
+        { id: "tvscredit-twl", name: "TVS Credit", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "tvs credit logo", applyLink: "https://www.tvscredit.com/two-wheeler-loans/", isBank: false, interestRate: "Rates vary" },
+        { id: "ltfs-twl", name: "L&T Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "lt finance logo", applyLink: "https://www.ltfs.com/companies/lt-finance/two-wheeler-loan.html", isBank: false, interestRate: "Rates vary" },
+        { id: "shriramcity-twl", name: "Shriram City Union Finance", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "shriram city logo", applyLink: "https://www.shriramcity.in/two-wheeler-loan", isBank: false, interestRate: "Rates vary" },
+        { id: "hero-twl", name: "Hero FinCorp", logoUrl: "https://placehold.co/32x32.png", dataAiHint: "hero fincorp logo", applyLink: "https://www.herofincorp.com/two-wheeler-loan", isBank: false, interestRate: "Rates vary" },
     ]
   },
 ];
@@ -245,7 +245,7 @@ export default function ApplyLoanPage() {
                   <TableBody>
                     {selectedLoan.providers.map((provider) => (
                       <TableRow key={provider.id} className="hover:bg-muted/20 transition-colors">
-                        <TableCell className="hidden sm:table-cell">
+                        <TableCell className="hidden sm:table-cell py-3">
                           <Image
                             src={provider.logoUrl}
                             alt={`${provider.name} logo`}
@@ -281,3 +281,5 @@ export default function ApplyLoanPage() {
     </div>
   );
 }
+
+    
